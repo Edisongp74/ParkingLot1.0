@@ -9,4 +9,5 @@
   <Folder Name="/Presenters/">
     <Project Path="ParkingLot1.0.Web/ParkingLot1.0.Web.csproj" />
   </Folder>
+  <Folder Name="/Test/" />
 </Solution>

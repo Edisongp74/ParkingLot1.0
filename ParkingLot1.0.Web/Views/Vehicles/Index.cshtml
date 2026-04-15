@@ -1,0 +1,40 @@
+@model List<ParkingLot1._0.Domain.Entities.Vehicle>
+
+@{
+    ViewData["Title"] = "Vehiculos";
+}
+
+<h1>Vehiculos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Vehiculo</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Color</th>
+            <th>Cliente</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var vehicle in Model)
+        {
+            <tr>
+                <td>@vehicle.LicensePlate</td>
+                <td>@vehicle.Type</td>
+                <td>@vehicle.Brand</td>
+                <td>@vehicle.Color</td>
+                <td>@vehicle.Customer?.FirstName @vehicle.Customer?.LastName</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@vehicle.Id" class="btn btn-warning btn-sm">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@vehicle.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

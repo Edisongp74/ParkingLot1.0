@@ -8,23 +8,23 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\chich\\.nuget\\packages\\": {},
+    "C:\\Users\\myani\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\myani\\Documents\\proyectos Universidad\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
       "projectName": "ParkingLot1.0.Domain",
-      "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
-      "packagesPath": "C:\\Users\\chich\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\obj\\",
+      "projectPath": "C:\\Users\\myani\\Documents\\proyectos Universidad\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
+      "packagesPath": "C:\\Users\\myani\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\myani\\Documents\\proyectos Universidad\\ParkingLot1.0\\ParkingLot1.0.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\chich\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\myani\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

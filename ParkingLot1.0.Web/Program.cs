@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application.Features.ParkingRecords.Commands.CreateParkingRecord;
+using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Persistence.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // 2. Inyectar MediatR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateParkingRecordCommand).Assembly));
+
+// 3. Inyectar los repositorios
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 var app = builder.Build();
 

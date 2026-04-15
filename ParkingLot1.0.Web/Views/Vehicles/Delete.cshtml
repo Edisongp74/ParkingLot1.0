@@ -1,0 +1,35 @@
+@model ParkingLot1._0.Domain.Entities.Vehicle
+
+@{
+    ViewData["Title"] = "Eliminar Vehiculo";
+}
+
+<h1>Eliminar Vehiculo</h1>
+
+<h3>¿Estas seguro de que deseas eliminar este vehiculo?</h3>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Placa</dt>
+        <dd class="col-sm-9">@Model.LicensePlate</dd>
+
+        <dt class="col-sm-3">Tipo</dt>
+        <dd class="col-sm-9">@Model.Type</dd>
+
+        <dt class="col-sm-3">Marca</dt>
+        <dd class="col-sm-9">@Model.Brand</dd>
+
+        <dt class="col-sm-3">Color</dt>
+        <dd class="col-sm-9">@Model.Color</dd>
+
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">@Model.Customer?.FirstName @Model.Customer?.LastName</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </form>
+</div>

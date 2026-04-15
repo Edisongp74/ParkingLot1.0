@@ -480,3 +480,23 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Archivos de requisitos del proyecto
+proyecto 1.md
+
+# Configuracion local de cada desarrollador
+appsettings.Development.json
+
+# AI coding tools
+.claude/
+.claude*
+.aider*
+.cursor/
+.cursorignore
+.cursorindexingignore
+.cursorrules
+.github/copilot*
+.copilot*
+.codeium/
+.windsurf/
+.vibecode/

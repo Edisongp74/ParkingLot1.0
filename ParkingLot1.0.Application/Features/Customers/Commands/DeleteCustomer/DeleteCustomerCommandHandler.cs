@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MediatR;
 using ParkingLot1._0.Application.Interfaces;
+using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer
 {
@@ -20,7 +21,15 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer
         // Elimino el cliente por su Id
         public async Task<Unit> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
         {
+            var customer = await _customerRepository.GetByIdAsync(request.Id);
+
+            if (customer == null)
+            {
+                throw new NotFoundException($"No se puede eliminar, el cliente con ID {request.Id} no existe");
+            }
+
             await _customerRepository.DeleteAsync(request.Id);
+
             return Unit.Value;
         }
     }

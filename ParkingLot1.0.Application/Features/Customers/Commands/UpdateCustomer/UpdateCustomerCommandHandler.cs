@@ -4,6 +4,7 @@ using System.Text;
 using MediatR;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
+using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
 {
@@ -21,19 +22,41 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
         // Busco el cliente, actualizo sus datos y lo guardo
         public async Task<Unit> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
         {
-            var customer = new Customer
-            {
-                Id = request.Id,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                DocumentNumber = request.DocumentNumber,
-                DocumentType = request.DocumentType,
-                Phone = request.Phone,
-                CustomerType = request.CustomerType
-            };
+            
+            var existingCustomer = await _customerRepository.GetByIdAsync(request.Id);
 
-            // Actualizo el cliente en la base de datos
-            await _customerRepository.UpdateAsync(customer);
+            if (existingCustomer == null)
+            {
+                throw new NotFoundException($"El cliente con ID {request.Id} no existe");
+            }
+
+            
+            if (string.IsNullOrWhiteSpace(request.FirstName))
+            {
+                throw new BusinessException("El nombre es obligatorio");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.LastName))
+            {
+                throw new BusinessException("El apellido es obligatorio");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.DocumentNumber))
+            {
+                throw new BusinessException("El documento es obligatorio");
+            }
+
+            
+            existingCustomer.FirstName = request.FirstName;
+            existingCustomer.LastName = request.LastName;
+            existingCustomer.DocumentNumber = request.DocumentNumber;
+            existingCustomer.DocumentType = request.DocumentType;
+            existingCustomer.Phone = request.Phone;
+            existingCustomer.CustomerType = request.CustomerType;
+
+            // Guardar cambios
+            await _customerRepository.UpdateAsync(existingCustomer);
+
             return Unit.Value;
         }
     }

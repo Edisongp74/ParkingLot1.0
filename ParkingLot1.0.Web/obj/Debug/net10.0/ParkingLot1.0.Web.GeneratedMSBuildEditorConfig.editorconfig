@@ -19,73 +19,73 @@ build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
 build_property.RootNamespace = ParkingLot1._0.Web
 build_property.RootNamespace = ParkingLot1._0.Web
-build_property.ProjectDir = C:\Users\myani\Documents\proyectos Universidad\ParkingLot1.0\ParkingLot1.0.Web\
+build_property.ProjectDir = C:\Users\ADMIN\Documents\Software\ParkingLot1.0-main\ParkingLot1.0.Web\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\myani\Documents\proyectos Universidad\ParkingLot1.0\ParkingLot1.0.Web
+build_property.MSBuildProjectDirectory = C:\Users\ADMIN\Documents\Software\ParkingLot1.0-main\ParkingLot1.0.Web
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Customers/Create.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Customers/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Customers/Delete.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Customers/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Customers/Edit.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Customers/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Customers/Index.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Customers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Home/Index.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Home/Privacy.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Shared/Error.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Vehicles/Create.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Vehicles/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVoaWNsZXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Vehicles/Delete.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Vehicles/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVoaWNsZXNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Vehicles/Edit.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Vehicles/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVoaWNsZXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Vehicles/Index.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Vehicles/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVoaWNsZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/_ViewImports.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/_ViewStart.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/myani/Documents/proyectos Universidad/ParkingLot1.0/ParkingLot1.0.Web/Views/Shared/_Layout.cshtml]
+[C:/Users/ADMIN/Documents/Software/ParkingLot1.0-main/ParkingLot1.0.Web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-w7hmuhkk9n

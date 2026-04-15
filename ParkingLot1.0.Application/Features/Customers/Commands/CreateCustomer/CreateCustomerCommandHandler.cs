@@ -4,6 +4,7 @@ using System.Text;
 using MediatR;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
+using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer
 {
@@ -21,6 +22,21 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer
         // Creo el cliente con los datos del comando y lo guardo
         public async Task<int> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(request.FirstName))
+            {
+                throw new BusinessException("El nombre es obligatorio");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.LastName))
+            {
+                throw new BusinessException("El apellido es obligatorio");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.DocumentNumber))
+            {
+                throw new BusinessException("El documento es obligatorio");
+            }
+
             var customer = new Customer
             {
                 FirstName = request.FirstName,
@@ -31,8 +47,8 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer
                 CustomerType = request.CustomerType
             };
 
-            // Guardo el cliente y retorno su Id
             var id = await _customerRepository.AddAsync(customer);
+
             return id;
         }
     }

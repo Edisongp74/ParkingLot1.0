@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer;
-using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer;
+using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById;
+using ParkingLot1._0.Web.Models;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -19,11 +20,24 @@ namespace ParkingLot1._0.Web.Controllers
             _mediator = mediator;
         }
 
-        // Listo todos los clientes
+        // Listo todos los clientes con ViewModel para la UI
         public async Task<IActionResult> Index()
         {
             var customers = await _mediator.Send(new GetAllCustomersQuery());
-            return View(customers);
+
+            // Dentro del Select del Index:
+            var viewModel = customers.Select(c => new CustomerViewModel
+            {
+                Id = c.Id,
+                FullName = $"{c.FirstName} {c.LastName}",
+                DocumentNumber = c.DocumentNumber,
+                Phone = c.Phone,
+                TotalVehicles = c.Vehicles?.Count ?? 0,
+                HasActivePass = c.HasActiveMonthlyPass()
+            }).ToList();
+
+            // 3. Envía la lista de ViewModels a la Vista
+            return View(viewModel);
         }
 
         // Muestro el formulario para crear un cliente

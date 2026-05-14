@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Web.Models;
 using System.Diagnostics;
 
@@ -6,8 +7,18 @@ namespace ParkingLot1._0.Web.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ApplicationDbContext _context;
+        public HomeController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
+            
+            ViewBag.TotalClientes = _context.Customers.Count();
+            ViewBag.TotalVehiculos = _context.Vehicles.Count();
+
             return View();
         }
 

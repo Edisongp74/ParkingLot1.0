@@ -23,7 +23,9 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 var app = builder.Build();
 
-// ... de aquí para abajo sigue lo que ya tienes (app.UseExceptionHandler, etc.)
+app.UseStaticFiles();
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

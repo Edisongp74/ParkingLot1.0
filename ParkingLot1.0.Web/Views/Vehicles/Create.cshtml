@@ -1,57 +1,70 @@
 @model ParkingLot1._0.Application.Features.Vehicles.Commands.CreateVehicle.CreateVehicleCommand
 
 @{
-    ViewData["Title"] = "Crear Vehiculo";
+    ViewData["Title"] = "Registrar Vehículo";
 }
 
-<h1>Crear Vehiculo</h1>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-car-front"></i> Registrar Nuevo Vehículo</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LicensePlate" class="form-label font-weight-bold">Placa</label>
+                        <input asp-for="LicensePlate" class="form-control text-uppercase" placeholder="Ej: ABC-123" />
+                        <span asp-validation-for="LicensePlate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CustomerId" class="form-label font-weight-bold">Propietario / Cliente</label>
+                        <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.Customers">
+                            <option value="">-- Seleccione el cliente --</option>
+                        </select>
+                        <span asp-validation-for="CustomerId" class="text-danger"></span>
+                    </div>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="LicensePlate" class="control-label">Placa</label>
-                <input asp-for="LicensePlate" class="form-control" />
-                <span asp-validation-for="LicensePlate" class="text-danger"></span>
-            </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Type" class="form-label font-weight-bold">Tipo de Vehículo</label>
+                        <select asp-for="Type" class="form-select">
+                            <option value="">Seleccione...</option>
+                            <option value="Automóvil">Automóvil</option>
+                            <option value="Motocicleta">Motocicleta</option>
+                            <option value="Camioneta">Camioneta</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Brand" class="form-label font-weight-bold">Marca</label>
+                        <input asp-for="Brand" class="form-control" placeholder="Ej: Toyota" />
+                        <span asp-validation-for="Brand" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Color" class="form-label font-weight-bold">Color</label>
+                        <input asp-for="Color" class="form-control" placeholder="Ej: Blanco" />
+                        <span asp-validation-for="Color" class="text-danger"></span>
+                    </div>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Type" class="control-label">Tipo</label>
-                <input asp-for="Type" class="form-control" />
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Brand" class="control-label">Marca</label>
-                <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Color" class="control-label">Color</label>
-                <input asp-for="Color" class="form-control" />
-                <span asp-validation-for="Color" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="CustomerId" class="control-label">Cliente</label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.Customers">
-                    <option value="">-- Seleccionar Cliente --</option>
-                </select>
-                <span asp-validation-for="CustomerId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Volver</a>
-            </div>
-        </form>
+                <hr />
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Guardar Vehículo
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

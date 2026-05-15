@@ -5,6 +5,7 @@ using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Persistence.Repositories;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +21,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 // 3. Inyectar los repositorios
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IMonthlyPassRepository, MonthlyPassRepository>();
 
 var app = builder.Build();
 

@@ -1,26 +1,26 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById;
+using ParkingLot1._0.Application.Features.MonthlyPasses.Commands.CreateMonthlyPass;
 using ParkingLot1._0.Web.Models;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-    // Controlador para manejar las operaciones CRUD de clientes
+
     public class CustomersController : Controller
     {
         private readonly IMediator _mediator;
 
-        // Inyecto MediatR para enviar los commands y queries
         public CustomersController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        // Listo todos los clientes con ViewModel para la UI
         public async Task<IActionResult> Index()
         {
             var customers = await _mediator.Send(new GetAllCustomersQuery());
@@ -40,13 +40,12 @@ namespace ParkingLot1._0.Web.Controllers
             return View(viewModel);
         }
 
-        // Muestro el formulario para crear un cliente
         public IActionResult Create()
         {
             return View();
         }
 
-        // Recibo los datos del formulario y creo el cliente
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateCustomerCommand command)
@@ -59,7 +58,7 @@ namespace ParkingLot1._0.Web.Controllers
             return View(command);
         }
 
-        // Muestro el formulario para editar un cliente
+
         public async Task<IActionResult> Edit(int id)
         {
             var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
@@ -68,7 +67,7 @@ namespace ParkingLot1._0.Web.Controllers
                 return NotFound();
             }
 
-            // Mapeo los datos del cliente al comando de actualizacion
+
             var command = new UpdateCustomerCommand
             {
                 Id = customer.Id,
@@ -83,7 +82,6 @@ namespace ParkingLot1._0.Web.Controllers
             return View(command);
         }
 
-        // Recibo los datos del formulario y actualizo el cliente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, UpdateCustomerCommand command)
@@ -101,7 +99,6 @@ namespace ParkingLot1._0.Web.Controllers
             return View(command);
         }
 
-        // Muestro la vista de confirmacion para eliminar un cliente
         public async Task<IActionResult> Delete(int id)
         {
             var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
@@ -112,13 +109,54 @@ namespace ParkingLot1._0.Web.Controllers
             return View(customer);
         }
 
-        // Confirmo la eliminacion del cliente
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteCustomerCommand { Id = id });
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> BuyPass(int id)
+        {
+            var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
+
+            if (customer == null) return NotFound();
+
+            var viewModel = new BuyMonthlyPassViewModel
+            {
+                CustomerId = customer.Id,
+                CustomerName = customer.FullName,
+
+                Vehicles = customer.Vehicles.Select(v => new VehicleViewModel
+                {
+                    Id = v.Id,
+                    Plate = v.LicensePlate
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BuyPass(BuyMonthlyPassViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+     
+                await _mediator.Send(new CreateMonthlyPassCommand
+                {
+                    CustomerId = model.CustomerId,
+                    VehicleId = model.VehicleId,
+                    StartDate = model.StartDate,
+                    RateId = 1 // ID de la tarifa mensual por defecto
+                });
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(model);
         }
     }
 }

@@ -19,12 +19,17 @@ namespace ParkingLot1._0.Persistence.Repositories
 
         public async Task<List<Customer>> GetAllAsync()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers
+                .Include(c => c.Vehicles)
+                .Include(c => c.MonthlyPasses) 
+                .ToListAsync();
         }
 
         public async Task<Customer?> GetByIdAsync(int id)
         {
-            return await _context.Customers.FindAsync(id);
+            return await _context.Customers
+                .Include(c => c.Vehicles) 
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<int> AddAsync(Customer customer)

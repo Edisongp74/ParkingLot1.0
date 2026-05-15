@@ -1,0 +1,21 @@
+﻿@model BuyMonthlyPassViewModel
+<h1>Vehículos encontrados: @Model.Vehicles.Count</h1>
+<h2>Comprar Mensualidad para @Model.CustomerName</h2>
+
+<form asp-action="BuyPass" method="post">
+    <input type="hidden" asp-for="CustomerId" />
+
+    <div class="form-group">
+        <label>Vehículo</label>
+        <select asp-for="VehicleId" class="form-control"
+                asp-items="@(new SelectList(Model.Vehicles, "Id", "Plate"))">
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Fecha de Inicio</label>
+        <input asp-for="StartDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Activar Mensualidad</button>
+</form>

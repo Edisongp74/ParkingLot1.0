@@ -7,9 +7,9 @@
 </div>
 
 <table class="table table-striped shadow-sm">
-    <thead class="table-dark">
+    <thead class="table-dark text-center">
         <tr>
-            <th>Nombre Completo</th>
+            <th class="text-start ps-3">Nombre Completo</th>
             <th>Documento</th>
             <th>Teléfono</th>
             <th>Vehículos</th>
@@ -24,15 +24,31 @@
                 <td>@customer.FullName</td>
                 <td>@customer.DocumentNumber</td>
                 <td>@customer.Phone</td>
-                <td>@customer.TotalVehicles</td>
+                <td class="text-center">
+                    <span class="badge rounded-pill bg-light text-dark border px-2">
+                        @customer.TotalVehicles
+                    </span>
+                </td>
+
                 <td>
                     @if (customer.HasActivePass)
                     {
-                        <span class="badge bg-success">Activo</span>
+                        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                            <i class="bi bi-check-lg me-1"></i> Activo
+                        </span>
                     }
                     else
                     {
-                        <span class="badge bg-danger">Vencido</span>
+                        <div class="d-flex flex-column align-items-center gap-2">
+                            <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3 py-1">
+                                Vencido
+                            </span>
+                            <a asp-action="BuyPass" asp-route-id="@customer.Id"
+                               class="btn btn-sm text-white rounded-pill px-3 shadow-sm"
+                               style="background-color: #6f42c1; font-size: 0.8rem;">
+                                <i class="bi bi-cart-plus-fill me-1"></i> Comprar
+                            </a>
+                        </div>
                     }
                 </td>
                 <td>

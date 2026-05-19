@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
@@ -21,14 +18,14 @@ namespace ParkingLot1._0.Persistence.Repositories
         {
             return await _context.Customers
                 .Include(c => c.Vehicles)
-                .Include(c => c.MonthlyPasses) 
+                .Include(c => c.MonthlyPasses)
                 .ToListAsync();
         }
 
         public async Task<Customer?> GetByIdAsync(int id)
         {
             return await _context.Customers
-                .Include(c => c.Vehicles) 
+                .Include(c => c.Vehicles)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 

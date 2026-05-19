@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MediatR;
 using ParkingLot1._0.Application.Interfaces;
-using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
@@ -22,7 +18,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
         // Busco el cliente, actualizo sus datos y lo guardo
         public async Task<Unit> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
         {
-            
+
             var existingCustomer = await _customerRepository.GetByIdAsync(request.Id);
 
             if (existingCustomer == null)
@@ -30,7 +26,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
                 throw new NotFoundException($"El cliente con ID {request.Id} no existe");
             }
 
-            
+
             if (string.IsNullOrWhiteSpace(request.FirstName))
             {
                 throw new BusinessException("El nombre es obligatorio");
@@ -46,7 +42,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer
                 throw new BusinessException("El documento es obligatorio");
             }
 
-            
+
             existingCustomer.FirstName = request.FirstName;
             existingCustomer.LastName = request.LastName;
             existingCustomer.DocumentNumber = request.DocumentNumber;

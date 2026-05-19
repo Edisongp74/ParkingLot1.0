@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ParkingLot1._0.Web.Models;
 
 namespace ParkingLot1._0.Web.Models
 {

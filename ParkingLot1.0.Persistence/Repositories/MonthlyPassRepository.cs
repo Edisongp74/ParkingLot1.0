@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ParkingLot1._0.Application.Interfaces;
+﻿using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Persistence.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace ParkingLot1._0.Persistence.Repositories
 {

@@ -1,6 +1,6 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
@@ -11,7 +11,7 @@ using ParkingLot1._0.Web.Models;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-
+    [Authorize]
     public class CustomersController : Controller
     {
         private readonly IMediator _mediator;
@@ -25,7 +25,6 @@ namespace ParkingLot1._0.Web.Controllers
         {
             var customers = await _mediator.Send(new GetAllCustomersQuery());
 
-            // Dentro del Select del Index:
             var viewModel = customers.Select(c => new CustomerViewModel
             {
                 Id = c.Id,
@@ -36,7 +35,6 @@ namespace ParkingLot1._0.Web.Controllers
                 HasActivePass = c.HasActiveMonthlyPass()
             }).ToList();
 
-            // 3. Envía la lista de ViewModels a la Vista
             return View(viewModel);
         }
 
@@ -44,7 +42,6 @@ namespace ParkingLot1._0.Web.Controllers
         {
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -55,18 +52,18 @@ namespace ParkingLot1._0.Web.Controllers
                 await _mediator.Send(command);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(command);
         }
-
 
         public async Task<IActionResult> Edit(int id)
         {
             var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
+
             if (customer == null)
             {
                 return NotFound();
             }
-
 
             var command = new UpdateCustomerCommand
             {
@@ -96,25 +93,28 @@ namespace ParkingLot1._0.Web.Controllers
                 await _mediator.Send(command);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(command);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
+
             if (customer == null)
             {
                 return NotFound();
             }
+
             return View(customer);
         }
-
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteCustomerCommand { Id = id });
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -123,7 +123,10 @@ namespace ParkingLot1._0.Web.Controllers
         {
             var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
 
-            if (customer == null) return NotFound();
+            if (customer == null)
+            {
+                return NotFound();
+            }
 
             var viewModel = new BuyMonthlyPassViewModel
             {
@@ -145,17 +148,17 @@ namespace ParkingLot1._0.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-     
                 await _mediator.Send(new CreateMonthlyPassCommand
                 {
                     CustomerId = model.CustomerId,
                     VehicleId = model.VehicleId,
                     StartDate = model.StartDate,
-                    RateId = 1 // ID de la tarifa mensual por defecto
+                    RateId = 1
                 });
 
                 return RedirectToAction(nameof(Index));
             }
+
             return View(model);
         }
     }

@@ -1,16 +1,18 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using MediatR;
+using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Vehicles.Commands.CreateVehicle;
-using ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle;
 using ParkingLot1._0.Application.Features.Vehicles.Commands.DeleteVehicle;
+using ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle;
 using ParkingLot1._0.Application.Features.Vehicles.Queries.GetAllVehicles;
 using ParkingLot1._0.Application.Features.Vehicles.Queries.GetVehicleById;
-using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 
 namespace ParkingLot1._0.Web.Controllers
 {
     // Controlador para manejar las operaciones CRUD de vehiculos
+    [Authorize]
     public class VehiclesController : Controller
     {
         private readonly IMediator _mediator;
@@ -34,6 +36,7 @@ namespace ParkingLot1._0.Web.Controllers
             // Cargo la lista de clientes para el dropdown
             var customers = await _mediator.Send(new GetAllCustomersQuery());
             ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
+
             return View();
         }
 
@@ -45,12 +48,14 @@ namespace ParkingLot1._0.Web.Controllers
             if (ModelState.IsValid)
             {
                 await _mediator.Send(command);
+
                 return RedirectToAction(nameof(Index));
             }
 
             // Si hay error, recargo la lista de clientes
             var customers = await _mediator.Send(new GetAllCustomersQuery());
             ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
+
             return View(command);
         }
 
@@ -58,6 +63,7 @@ namespace ParkingLot1._0.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+
             if (vehicle == null)
             {
                 return NotFound();
@@ -76,7 +82,14 @@ namespace ParkingLot1._0.Web.Controllers
 
             // Cargo la lista de clientes para el dropdown
             var customers = await _mediator.Send(new GetAllCustomersQuery());
-            ViewBag.Customers = new SelectList(customers, "Id", "FirstName", vehicle.CustomerId);
+
+            ViewBag.Customers = new SelectList(
+                customers,
+                "Id",
+                "FirstName",
+                vehicle.CustomerId
+            );
+
             return View(command);
         }
 
@@ -93,12 +106,20 @@ namespace ParkingLot1._0.Web.Controllers
             if (ModelState.IsValid)
             {
                 await _mediator.Send(command);
+
                 return RedirectToAction(nameof(Index));
             }
 
             // Si hay error, recargo la lista de clientes
             var customers = await _mediator.Send(new GetAllCustomersQuery());
-            ViewBag.Customers = new SelectList(customers, "Id", "FirstName", command.CustomerId);
+
+            ViewBag.Customers = new SelectList(
+                customers,
+                "Id",
+                "FirstName",
+                command.CustomerId
+            );
+
             return View(command);
         }
 
@@ -106,10 +127,12 @@ namespace ParkingLot1._0.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+
             if (vehicle == null)
             {
                 return NotFound();
             }
+
             return View(vehicle);
         }
 
@@ -119,6 +142,7 @@ namespace ParkingLot1._0.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _mediator.Send(new DeleteVehicleCommand { Id = id });
+
             return RedirectToAction(nameof(Index));
         }
     }

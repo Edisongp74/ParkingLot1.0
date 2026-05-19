@@ -7,10 +7,10 @@
 
     <link href="~/assets/css/style.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        /* Forzamos visibilidad si el JS falla */
         #main-wrapper {
             opacity: 1 !important;
             display: block !important;
@@ -52,51 +52,179 @@
             font-size: 1.2rem;
             color: #3699ff;
         }
+
+        .auth-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+            .auth-links span {
+                color: white;
+                font-weight: 500;
+            }
+
+            .auth-links a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .auth-links a:hover {
+                    text-decoration: underline;
+                }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+            .logout-btn:hover {
+                text-decoration: underline;
+            }
+
+        .logout-form {
+            margin: 0;
+        }
     </style>
 </head>
 
 <body>
+
     <div id="main-wrapper" data-layout="vertical" data-sidebartype="full">
 
-        <header class="topbar" style="background: #1f262d; color: white; padding: 10px 20px;">
-            <span class="logo-text">PARKING LOT 1.0</span>
+        <header class="topbar"
+                style="background: #1f262d;
+                       color: white;
+                       padding: 10px 20px;
+                       display:flex;
+                       justify-content:space-between;
+                       align-items:center;">
+
+            <span class="logo-text">
+                PARKING LOT 1.0
+            </span>
+
+            <div class="auth-links">
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <span>
+                        Hola @User.Identity.Name
+                    </span>
+
+                    <form class="logout-form"
+                          asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          method="post">
+
+                        <button type="submit"
+                                class="logout-btn">
+
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+
+                        </button>
+
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Identity"
+                       asp-page="/Account/Login">
+
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login
+                    </a>
+
+                    <a asp-area="Identity"
+                       asp-page="/Account/Register">
+
+                        <i class="bi bi-person-plus"></i>
+                        Register
+                    </a>
+                }
+
+            </div>
+
         </header>
 
         <aside class="left-sidebar">
+
             <nav class="sidebar-nav">
+
                 <ul id="sidebarnav">
+
                     <li class="sidebar-item">
-                        <a class="sidebar-link" asp-controller="Home" asp-action="Index">
-                            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                        <a class="sidebar-link"
+                           asp-controller="Home"
+                           asp-action="Index">
+
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+
                         </a>
                     </li>
+
                     <li class="sidebar-item">
-                        <a class="sidebar-link" asp-controller="Customers" asp-action="Index">
-                            <i class="bi bi-people"></i><span>Clientes</span>
+                        <a class="sidebar-link"
+                           asp-controller="Customers"
+                           asp-action="Index">
+
+                            <i class="bi bi-people"></i>
+                            <span>Clientes</span>
+
                         </a>
                     </li>
+
                     <li class="sidebar-item">
-                        <a class="sidebar-link" asp-controller="Vehicles" asp-action="Index">
-                            <i class="bi bi-car-front"></i><span>Vehículos</span>
+                        <a class="sidebar-link"
+                           asp-controller="Vehicles"
+                           asp-action="Index">
+
+                            <i class="bi bi-car-front"></i>
+                            <span>Vehículos</span>
+
                         </a>
                     </li>
+
                 </ul>
+
             </nav>
+
         </aside>
 
         <div class="page-wrapper">
+
             <div class="container-fluid">
+
                 @RenderBody()
+
             </div>
+
             <footer class="text-center py-4">
+
                 &copy; 2026 - ParkingLot 1.0
+
             </footer>
+
         </div>
+
     </div>
 
     <script src="~/assets/libs/jquery/dist/jquery.min.js"></script>
+
     <script src="~/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/assets/js/custom.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

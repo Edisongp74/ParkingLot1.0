@@ -57,6 +57,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IMonthlyPassRepository, MonthlyPassRepository>();
+builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 
 var app = builder.Build();
 

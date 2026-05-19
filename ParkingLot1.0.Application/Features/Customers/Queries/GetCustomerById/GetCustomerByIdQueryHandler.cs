@@ -5,18 +5,19 @@ using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById
 {
-
-    public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery, Customer>
+    public class GetCustomerByIdQueryHandler
+        : IRequestHandler<GetCustomerByIdQuery, Customer?>
     {
         private readonly ICustomerRepository _customerRepository;
-
 
         public GetCustomerByIdQueryHandler(ICustomerRepository customerRepository)
         {
             _customerRepository = customerRepository;
         }
 
-        public async Task<Customer> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Customer?> Handle(
+            GetCustomerByIdQuery request,
+            CancellationToken cancellationToken)
         {
             var customer = await _customerRepository.GetByIdAsync(request.Id);
 

@@ -12,6 +12,7 @@ namespace ParkingLot1._0.Persistence.Contexts
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Section> Sections { get; set; }
         public DbSet<ParkingSpot> ParkingSpots { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<ParkingRecord> ParkingRecords { get; set; }

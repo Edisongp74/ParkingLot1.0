@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Domain.Entities;
 
@@ -7,7 +7,8 @@ namespace ParkingLot1._0.Persistence.Contexts
     public class ApplicationDbContext
         : IdentityDbContext<ParkingLot1._0.Persistence.Identity.ApplicationUser, ParkingLot1._0.Persistence.Identity.ApplicationRole, string>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
         }
 
@@ -30,8 +31,13 @@ namespace ParkingLot1._0.Persistence.Contexts
                 relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
             }
 
-            modelBuilder.Entity<Payment>().Property(p => p.Amount).HasColumnType("decimal(18,2)");
-            modelBuilder.Entity<Rate>().Property(r => r.Value).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Rate>()
+                .Property(r => r.Value)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
 namespace ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle
 {
     // Me encargo de manejar la actualizacion de un vehiculo
-    public class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleCommand, Unit>
+    public class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleCommand>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
@@ -19,7 +16,7 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle
         }
 
         // Busco el vehiculo, actualizo sus datos y lo guardo
-        public async Task<Unit> Handle(UpdateVehicleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateVehicleCommand request)
         {
             var vehicle = new Vehicle
             {
@@ -33,7 +30,6 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle
 
             // Actualizo el vehiculo en la base de datos
             await _vehicleRepository.UpdateAsync(vehicle);
-            return Unit.Value;
         }
     }
 }

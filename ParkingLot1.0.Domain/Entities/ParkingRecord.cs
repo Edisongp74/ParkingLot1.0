@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ParkingLot1._0.Domain.Entities
+﻿namespace ParkingLot1._0.Domain.Entities
 {
     public class ParkingRecord
     {
@@ -23,7 +19,7 @@ namespace ParkingLot1._0.Domain.Entities
         public int? RateId { get; set; }
         public virtual Rate? Rate { get; set; }
 
-        
+
         public virtual Payment? Payment { get; set; }
     }
 }

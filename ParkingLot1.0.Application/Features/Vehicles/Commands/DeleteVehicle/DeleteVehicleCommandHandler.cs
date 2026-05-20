@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 
 namespace ParkingLot1._0.Application.Features.Vehicles.Commands.DeleteVehicle
 {
     // Me encargo de manejar la eliminacion de un vehiculo
-    public class DeleteVehicleCommandHandler : IRequestHandler<DeleteVehicleCommand, Unit>
+    public class DeleteVehicleCommandHandler : IRequestHandler<DeleteVehicleCommand>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
@@ -18,10 +15,9 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Commands.DeleteVehicle
         }
 
         // Elimino el vehiculo por su Id
-        public async Task<Unit> Handle(DeleteVehicleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteVehicleCommand request)
         {
             await _vehicleRepository.DeleteAsync(request.Id);
-            return Unit.Value;
         }
     }
 }

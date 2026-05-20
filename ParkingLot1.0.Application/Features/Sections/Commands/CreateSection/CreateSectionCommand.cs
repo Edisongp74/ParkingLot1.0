@@ -1,6 +1,4 @@
-﻿using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
@@ -21,16 +19,16 @@ namespace ParkingLot1._0.Application.Features.Sections.Commands.CreateSection
             _sectionRepository = sectionRepository;
         }
 
-        public async Task<int> Handle(CreateSectionCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateSectionCommand request)
         {
             var newSection = new Section
             {
                 Name = request.Name,
                 Description = request.Description,
-                IsActive = true 
+                IsActive = true
             };
 
-            var id = await _sectionRepository.AddAsync(newSection, cancellationToken);
+            var id = await _sectionRepository.AddAsync(newSection, CancellationToken.None);
 
             return id;
         }

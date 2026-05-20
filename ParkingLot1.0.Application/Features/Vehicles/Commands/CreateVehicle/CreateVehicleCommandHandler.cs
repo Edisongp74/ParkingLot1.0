@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
@@ -19,7 +16,7 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Commands.CreateVehicle
         }
 
         // Creo el vehiculo con los datos del comando y lo guardo
-        public async Task<int> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateVehicleCommand request)
         {
             var vehicle = new Vehicle
             {

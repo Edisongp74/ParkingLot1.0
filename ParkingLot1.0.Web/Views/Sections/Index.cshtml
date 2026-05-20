@@ -1,0 +1,44 @@
+﻿@using ParkingLot1._0.Application.Features.Sections.Queries.GetSectionsList
+@model PagedResult<SectionDto>
+
+@{
+    ViewData["Title"] = "Zonas del Parqueadero";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-layers-half"></i> Secciones del Parqueadero</h2>
+    <a asp-controller="Sections" asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill"></i> Nueva Sección
+    </a>
+</div>
+
+<table class="table table-striped shadow-sm">
+    <thead class="table-dark text-center">
+        <tr>
+            <th class="text-start ps-3" style="width: 15%">ID Seccional</th>
+            <th style="width: 35%">Nombre de la Zona</th>
+            <th style="width: 50%">Descripción / Notas</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Items != null && Model.Items.Count > 0)
+        {
+            @foreach (var seccion in Model.Items)
+            {
+                <tr>
+                    <td class="text-start ps-3">@seccion.Id</td>
+                    <td class="text-center"><strong>@seccion.Name</strong></td>
+                    <td class="text-start">@seccion.Description</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3" class="text-center text-muted py-4">
+                    <i class="bi bi-info-circle me-1"></i> No hay secciones configuradas.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

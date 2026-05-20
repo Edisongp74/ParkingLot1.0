@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Exceptions;
 
 namespace ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer
 {
     // Me encargo de manejar la eliminacion de un cliente
-    public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerCommand, Unit>
+    public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerCommand>
     {
         private readonly ICustomerRepository _customerRepository;
 
@@ -19,7 +16,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer
         }
 
         // Elimino el cliente por su Id
-        public async Task<Unit> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteCustomerCommand request)
         {
             var customer = await _customerRepository.GetByIdAsync(request.Id);
 
@@ -29,8 +26,6 @@ namespace ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer
             }
 
             await _customerRepository.DeleteAsync(request.Id);
-
-            return Unit.Value;
         }
     }
 }

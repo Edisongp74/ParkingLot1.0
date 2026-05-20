@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 using System.Text;
-using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Application.Interfaces;
 
@@ -33,12 +31,10 @@ namespace ParkingLot1._0.Application.Features.Sections.Queries.GetSectionsList
             _sectionRepository = sectionRepository;
         }
 
-        public async Task<PagedResult<SectionDto>> Handle(GetSectionsListQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<SectionDto>> Handle(GetSectionsListQuery request)
         {
-          
-            var (items, totalCount) = await _sectionRepository.GetPagedAsync(request.PageNumber, request.PageSize, cancellationToken);
+            var (items, totalCount) = await _sectionRepository.GetPagedAsync(request.PageNumber, request.PageSize, CancellationToken.None);
 
-   
             var dtos = new List<SectionDto>();
             foreach (var s in items)
             {

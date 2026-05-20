@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
@@ -16,7 +13,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers
             _customerRepository = customerRepository;
         }
 
-        public async Task<List<Customer>> Handle(GetAllCustomersQuery request, CancellationToken cancellationToken)
+        public async Task<List<Customer>> Handle(GetAllCustomersQuery request)
         {
             var customers = await _customerRepository.GetAllAsync();
             return customers;

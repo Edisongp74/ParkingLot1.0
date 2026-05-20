@@ -1,4 +1,4 @@
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Domain.Exceptions;
@@ -15,9 +15,7 @@ namespace ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById
             _customerRepository = customerRepository;
         }
 
-        public async Task<Customer?> Handle(
-            GetCustomerByIdQuery request,
-            CancellationToken cancellationToken)
+        public async Task<Customer?> Handle(GetCustomerByIdQuery request)
         {
             var customer = await _customerRepository.GetByIdAsync(request.Id);
 

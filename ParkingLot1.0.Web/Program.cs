@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
-using ParkingLot1._0.Application.Features.ParkingRecords.Commands.CreateParkingRecord;
-using ParkingLot1._0.Application.Interfaces;
-
+using ParkingLot1._0.Application;
+using ParkingLot1._0.Persistence;
 using ParkingLot1._0.Persistence.Contexts;
-using ParkingLot1._0.Persistence.Repositories;
-using ParkingLot1._0.Web.Areas.Identity.Data;
+using ParkingLot1._0.Web.Middleware;
+
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +16,18 @@ builder.Services.AddControllersWithViews();
 // Necesario para Identity
 builder.Services.AddRazorPages();
 
-// 1. Inyectar Base de Datos
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+// Registro los servicios de Application (Mediator, Handlers, Validators)
+builder.Services.AddApplicationServices();
 
-// 2. Configurar Identity
+// Registro los servicios de Persistence (DbContext, Repositorios)
+builder.Services.AddPersistenceServices(builder.Configuration);
+
+// Configurar Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 
-    // Configuración de contraseña
+    // Configuracion de contraseña
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
@@ -36,7 +37,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Configuración de Cookies
+// Configuracion de Cookies
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
@@ -49,15 +50,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// 3. Inyectar MediatR
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(CreateParkingRecordCommand).Assembly));
+// Configurar Session (necesario para el middleware de excepciones)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
-// 4. Inyectar repositorios
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-builder.Services.AddScoped<IMonthlyPassRepository, MonthlyPassRepository>();
-builder.Services.AddScoped<ISectionRepository, SectionRepository>();
+// Configurar Notyf (toast notifications - como el profesor)
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 10;
+    config.IsDismissable = true;
+    config.Position = NotyfPosition.BottomRight;
+});
 
 var app = builder.Build();
 
@@ -74,7 +77,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// IMPORTANTE:
+// Session ANTES de Authentication (como el profesor)
+app.UseSession();
+
 // Authentication debe ir antes de Authorization
 app.UseAuthentication();
 
@@ -82,6 +87,12 @@ app.UseAuthorization();
 
 // NECESARIO para Identity
 app.MapRazorPages();
+
+// Notyf antes del middleware de excepciones
+app.UseNotyf();
+
+// Middleware de excepciones - ULTIMO (atrapa todo)
+app.UseExceptionHandlerMiddleware();
 
 // Rutas MVC
 app.MapControllerRoute(

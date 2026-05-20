@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Web.Middleware;
 using ParkingLot1._0.Web.Models;
-using System.Diagnostics;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -33,9 +33,16 @@ namespace ParkingLot1._0.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            // Leo el mensaje de error de Session (como el profesor)
+            var message = HttpContext.Session.GetString(
+                ExceptionHandlerMiddleware.ERROR_MESSAGE_SESSION_KEY);
+
+            // Limpio la sesion
+            HttpContext.Session.Remove(ExceptionHandlerMiddleware.ERROR_MESSAGE_SESSION_KEY);
+
             return View(new ErrorViewModel
             {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                Message = message ?? "Ha ocurrido un error inesperado"
             });
         }
     }

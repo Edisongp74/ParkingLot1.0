@@ -1,4 +1,4 @@
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer;
@@ -7,7 +7,11 @@ using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById;
 using ParkingLot1._0.Application.Features.MonthlyPasses.Commands.CreateMonthlyPass;
+using ParkingLot1._0.Application.Exceptions;
+using ParkingLot1._0.Domain.Exceptions;
+using ParkingLot1._0.Web.DTOs.Customers;
 using ParkingLot1._0.Web.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -15,10 +19,12 @@ namespace ParkingLot1._0.Web.Controllers
     public class CustomersController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly INotyfService _notyf;
 
-        public CustomersController(IMediator mediator)
+        public CustomersController(IMediator mediator, INotyfService notyf)
         {
             _mediator = mediator;
+            _notyf = notyf;
         }
 
         public async Task<IActionResult> Index()
@@ -40,20 +46,46 @@ namespace ParkingLot1._0.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return View(new CreateCustomerDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateCustomerCommand command)
+        public async Task<IActionResult> Create(CreateCustomerDto dto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                _notyf.Error("Hay errores de validacion en el formulario");
+                return View(dto);
             }
 
-            return View(command);
+            try
+            {
+                var command = new CreateCustomerCommand
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    DocumentNumber = dto.DocumentNumber,
+                    DocumentType = dto.DocumentType,
+                    Phone = dto.Phone,
+                    CustomerType = dto.CustomerType
+                };
+
+                await _mediator.Send(command);
+
+                _notyf.Success("Cliente creado exitosamente");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (CustomValidationException ex)
+            {
+                _notyf.Error(string.Join(", ", ex.Errors));
+                return View(dto);
+            }
+            catch (BusinessException ex)
+            {
+                _notyf.Error(ex.Message);
+                return View(dto);
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -65,7 +97,7 @@ namespace ParkingLot1._0.Web.Controllers
                 return NotFound();
             }
 
-            var command = new UpdateCustomerCommand
+            var dto = new UpdateCustomerDto
             {
                 Id = customer.Id,
                 FirstName = customer.FirstName,
@@ -76,25 +108,52 @@ namespace ParkingLot1._0.Web.Controllers
                 CustomerType = customer.CustomerType
             };
 
-            return View(command);
+            return View(dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, UpdateCustomerCommand command)
+        public async Task<IActionResult> Edit(int id, UpdateCustomerDto dto)
         {
-            if (id != command.Id)
+            if (id != dto.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                _notyf.Error("Hay errores de validacion en el formulario");
+                return View(dto);
             }
 
-            return View(command);
+            try
+            {
+                var command = new UpdateCustomerCommand
+                {
+                    Id = dto.Id,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    DocumentNumber = dto.DocumentNumber,
+                    DocumentType = dto.DocumentType,
+                    Phone = dto.Phone,
+                    CustomerType = dto.CustomerType
+                };
+
+                await _mediator.Send(command);
+
+                _notyf.Success("Cliente actualizado exitosamente");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (CustomValidationException ex)
+            {
+                _notyf.Error(string.Join(", ", ex.Errors));
+                return View(dto);
+            }
+            catch (BusinessException ex)
+            {
+                _notyf.Error(ex.Message);
+                return View(dto);
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -113,9 +172,23 @@ namespace ParkingLot1._0.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _mediator.Send(new DeleteCustomerCommand { Id = id });
+            try
+            {
+                await _mediator.Send(new DeleteCustomerCommand { Id = id });
 
-            return RedirectToAction(nameof(Index));
+                _notyf.Success("Cliente eliminado exitosamente");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (NotFoundException ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpGet]
@@ -148,15 +221,24 @@ namespace ParkingLot1._0.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _mediator.Send(new CreateMonthlyPassCommand
+                try
                 {
-                    CustomerId = model.CustomerId,
-                    VehicleId = model.VehicleId,
-                    StartDate = model.StartDate,
-                    RateId = 1
-                });
+                    await _mediator.Send(new CreateMonthlyPassCommand
+                    {
+                        CustomerId = model.CustomerId,
+                        VehicleId = model.VehicleId,
+                        StartDate = model.StartDate,
+                        RateId = 1
+                    });
 
-                return RedirectToAction(nameof(Index));
+                    _notyf.Success("Mensualidad comprada exitosamente");
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (BusinessException ex)
+                {
+                    _notyf.Error(ex.Message);
+                    return View(model);
+                }
             }
 
             return View(model);

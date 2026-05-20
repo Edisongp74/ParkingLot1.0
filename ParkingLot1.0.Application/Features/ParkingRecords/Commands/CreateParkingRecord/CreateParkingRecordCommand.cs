@@ -1,4 +1,4 @@
-﻿using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 
 namespace ParkingLot1._0.Application.Features.ParkingRecords.Commands.CreateParkingRecord
 {

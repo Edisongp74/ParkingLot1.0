@@ -1,4 +1,4 @@
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
@@ -16,7 +16,7 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Queries.GetVehicleById
         }
 
         // Busco el vehiculo por su Id y lo retorno
-        public async Task<Vehicle?> Handle(GetVehicleByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Vehicle?> Handle(GetVehicleByIdQuery request)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(request.Id);
             return vehicle;

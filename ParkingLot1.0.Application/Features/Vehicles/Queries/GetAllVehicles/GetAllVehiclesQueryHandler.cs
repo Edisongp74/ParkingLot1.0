@@ -1,4 +1,4 @@
-using MediatR;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Application.Interfaces;
 using ParkingLot1._0.Domain.Entities;
 
@@ -16,7 +16,7 @@ namespace ParkingLot1._0.Application.Features.Vehicles.Queries.GetAllVehicles
         }
 
         // Obtengo todos los vehiculos desde el repositorio
-        public async Task<List<Vehicle>> Handle(GetAllVehiclesQuery request, CancellationToken cancellationToken)
+        public async Task<List<Vehicle>> Handle(GetAllVehiclesQuery request)
         {
             var vehicles = await _vehicleRepository.GetAllAsync();
             return vehicles;

@@ -1,13 +1,13 @@
-@model ParkingLot1._0.Application.Features.Vehicles.Commands.CreateVehicle.CreateVehicleCommand
+@model ParkingLot1._0.Web.DTOs.Vehicles.CreateVehicleDto
 
 @{
-    ViewData["Title"] = "Registrar Vehículo";
+    ViewData["Title"] = "Registrar Vehï¿½culo";
 }
 
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0"><i class="bi bi-car-front"></i> Registrar Nuevo Vehículo</h3>
+            <h3 class="mb-0"><i class="bi bi-car-front"></i> Registrar Nuevo Vehï¿½culo</h3>
         </div>
         <div class="card-body">
             <form asp-action="Create" method="post">
@@ -30,10 +30,10 @@
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label asp-for="Type" class="form-label font-weight-bold">Tipo de Vehículo</label>
+                        <label asp-for="Type" class="form-label font-weight-bold">Tipo de Vehï¿½culo</label>
                         <select asp-for="Type" class="form-select">
                             <option value="">Seleccione...</option>
-                            <option value="Automóvil">Automóvil</option>
+                            <option value="Automï¿½vil">Automï¿½vil</option>
                             <option value="Motocicleta">Motocicleta</option>
                             <option value="Camioneta">Camioneta</option>
                         </select>
@@ -55,7 +55,7 @@
                 <div class="d-flex justify-content-end gap-2">
                     <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Guardar Vehículo
+                        <i class="bi bi-save"></i> Guardar Vehï¿½culo
                     </button>
                 </div>
             </form>

@@ -1,4 +1,4 @@
-@model ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer.UpdateCustomerCommand
+@model ParkingLot1._0.Web.DTOs.Customers.UpdateCustomerDto
 
 @{
     ViewData["Title"] = "Editar Cliente";
@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header bg-warning text-dark">
-            <h3 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Información del Cliente</h3>
+            <h3 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Informaciï¿½n del Cliente</h3>
         </div>
         <div class="card-body">
             <form asp-action="Edit" method="post">
@@ -32,18 +32,21 @@
                     <div class="col-md-4 mb-3">
                         <label asp-for="DocumentType" class="form-label font-weight-bold">Tipo de Documento</label>
                         <select asp-for="DocumentType" class="form-select">
-                            <option value="CC">Cédula de Ciudadanía</option>
-                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="CC">Cï¿½dula de Ciudadanï¿½a</option>
+                            <option value="CE">Cï¿½dula de Extranjerï¿½a</option>
                             <option value="NIT">NIT</option>
                         </select>
+                        <span asp-validation-for="DocumentType" class="text-danger"></span>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label asp-for="DocumentNumber" class="form-label font-weight-bold">Número</label>
+                        <label asp-for="DocumentNumber" class="form-label font-weight-bold">Nï¿½mero</label>
                         <input asp-for="DocumentNumber" class="form-control" />
+                        <span asp-validation-for="DocumentNumber" class="text-danger"></span>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label asp-for="Phone" class="form-label font-weight-bold">Teléfono</label>
+                        <label asp-for="Phone" class="form-label font-weight-bold">Telï¿½fono</label>
                         <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
                 </div>
 

@@ -5,6 +5,8 @@ using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Persistence.Identity;
 using ParkingLot1._0.Persistence.Seeding;
 using ParkingLot1._0.Web.Middleware;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using ParkingLot1._0.Web.Services;
 
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
@@ -51,6 +53,7 @@ builder.Services.AddNotyf(config =>
 
 builder.Services.AddScoped<SeedDb>();
 
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

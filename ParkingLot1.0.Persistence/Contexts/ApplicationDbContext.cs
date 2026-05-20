@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Domain.Entities;
+using ParkingLot1._0.Persistence.Identity;
 using System.Linq;
 
 namespace ParkingLot1._0.Persistence.Contexts
 {
     public class ApplicationDbContext
-        : IdentityDbContext<ParkingLot1._0.Persistence.Identity.ApplicationUser, ParkingLot1._0.Persistence.Identity.ApplicationRole, string>
+        : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -22,7 +23,6 @@ namespace ParkingLot1._0.Persistence.Contexts
         public DbSet<Rate> Rates { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<MonthlyPass> MonthlyPasses { get; set; }
-
         public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

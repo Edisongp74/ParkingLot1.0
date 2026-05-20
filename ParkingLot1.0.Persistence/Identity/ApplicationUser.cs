@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace ParkingLot1._0.Persistence.Identity;
+using ParkingLot1._0.Persistence.Identity;
 
 public class ApplicationUser : IdentityUser
 {

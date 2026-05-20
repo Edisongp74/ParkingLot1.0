@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj": {}
+    "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj": {
+    "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj",
+        "projectUniqueName": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj",
         "projectName": "ParkingLot1.0.Application",
-        "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj",
-        "packagesPath": "C:\\Users\\PAULA ANDREA\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\obj\\",
+        "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj",
+        "packagesPath": "C:\\Users\\chich\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\PAULA ANDREA\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\chich\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -30,10 +30,11 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
-                "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj"
+              "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
+                "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj"
               }
             }
           }
@@ -48,10 +49,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "MediatR": {
@@ -75,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -353,20 +355,20 @@
         }
       }
     },
-    "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
+    "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
+        "projectUniqueName": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
         "projectName": "ParkingLot1.0.Domain",
-        "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
-        "packagesPath": "C:\\Users\\PAULA ANDREA\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\obj\\",
+        "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj",
+        "packagesPath": "C:\\Users\\chich\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\PAULA ANDREA\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\chich\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -379,6 +381,7 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -393,10 +396,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -414,7 +418,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -692,20 +696,20 @@
         }
       }
     },
-    "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj": {
+    "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj",
+        "projectUniqueName": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj",
         "projectName": "ParkingLot1.0.Persistence",
-        "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj",
-        "packagesPath": "C:\\Users\\PAULA ANDREA\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Persistence\\obj\\",
+        "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Persistence\\ParkingLot1.0.Persistence.csproj",
+        "packagesPath": "C:\\Users\\chich\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Persistence\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\PAULA ANDREA\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\chich\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -718,13 +722,14 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj": {
-                "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj"
+              "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj": {
+                "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Application\\ParkingLot1.0.Application.csproj"
               },
-              "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
-                "projectPath": "C:\\Users\\PAULA ANDREA\\Documents\\PROGRAMACION PARKING\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj"
+              "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj": {
+                "projectPath": "C:\\Projects\\ParkingLot1.0\\ParkingLot1.0.Domain\\ParkingLot1.0.Domain.csproj"
               }
             }
           }
@@ -739,10 +744,11 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
@@ -776,7 +782,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

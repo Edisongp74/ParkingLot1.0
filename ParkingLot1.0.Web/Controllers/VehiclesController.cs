@@ -12,41 +12,48 @@ using ParkingLot1._0.Application.Exceptions;
 using ParkingLot1._0.Domain.Exceptions;
 using ParkingLot1._0.Web.DTOs.Vehicles;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Domain.Entities;
+using ParkingLot1._0.Application.Common;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-    // Controlador para manejar las operaciones CRUD de vehiculos
     [Authorize]
     public class VehiclesController : Controller
     {
         private readonly IMediator _mediator;
         private readonly INotyfService _notyf;
+        private readonly ApplicationDbContext _context;
 
-        // Inyecto el mediador y el servicio de notificaciones
-        public VehiclesController(IMediator mediator, INotyfService notyf)
+        public VehiclesController(IMediator mediator, INotyfService notyf, ApplicationDbContext context)
         {
             _mediator = mediator;
             _notyf = notyf;
+            _context = context;
         }
 
-        // Listo todos los vehiculos
-        public async Task<IActionResult> Index()
+        // GET: Vehicles
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
         {
+            // Traemos los vehículos desde el Query Handler
             var vehicles = await _mediator.Send(new GetAllVehiclesQuery());
-            return View(vehicles);
+
+            // Convertimos la colección a un formato genérico consultable
+            var vehiclesQuery = vehicles.Cast<object>().AsQueryable();
+
+            // Creamos una única lista pagiada limpia de tipo object
+            var pagedVehicles = PagedList<object>.Create(vehiclesQuery, pageNumber, pageSize);
+
+            return View(pagedVehicles);
         }
 
-        // Muestro el formulario para crear un vehiculo
         public async Task<IActionResult> Create()
         {
-            // Cargo la lista de clientes para el dropdown
             var customers = await _mediator.Send(new GetAllCustomersQuery());
             ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
-
             return View(new CreateVehicleDto());
         }
 
-        // Recibo los datos del formulario y creo el vehiculo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateVehicleDto dto)
@@ -54,11 +61,8 @@ namespace ParkingLot1._0.Web.Controllers
             if (!ModelState.IsValid)
             {
                 _notyf.Error("Hay errores de validacion en el formulario");
-
-                // Si hay error, recargo la lista de clientes
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
-
                 return View(dto);
             }
 
@@ -75,30 +79,39 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Crear",
+                    Detalle = $"Se registró el vehículo con Placa: {dto.LicensePlate}, Marca: {dto.Brand}, Color: {dto.Color}",
+                    ControllerName = "Vehicles",
+                    ActionName = "Create",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
+
                 _notyf.Success("Vehiculo creado exitosamente");
                 return RedirectToAction(nameof(Index));
             }
             catch (CustomValidationException ex)
             {
                 _notyf.Error(string.Join(", ", ex.Errors));
-
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
-
                 return View(dto);
             }
             catch (BusinessException ex)
             {
                 _notyf.Error(ex.Message);
-
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
-
                 return View(dto);
             }
         }
 
-        // Muestro el formulario para editar un vehiculo
         public async Task<IActionResult> Edit(int id)
         {
             var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
@@ -108,7 +121,6 @@ namespace ParkingLot1._0.Web.Controllers
                 return NotFound();
             }
 
-            // Mapeo los datos del vehiculo al DTO de actualizacion
             var dto = new UpdateVehicleDto
             {
                 Id = vehicle.Id,
@@ -119,20 +131,12 @@ namespace ParkingLot1._0.Web.Controllers
                 CustomerId = vehicle.CustomerId
             };
 
-            // Cargo la lista de clientes para el dropdown
             var customers = await _mediator.Send(new GetAllCustomersQuery());
-
-            ViewBag.Customers = new SelectList(
-                customers,
-                "Id",
-                "FirstName",
-                vehicle.CustomerId
-            );
+            ViewBag.Customers = new SelectList(customers, "Id", "FirstName", vehicle.CustomerId);
 
             return View(dto);
         }
 
-        // Recibo los datos del formulario y actualizo el vehiculo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, UpdateVehicleDto dto)
@@ -145,10 +149,8 @@ namespace ParkingLot1._0.Web.Controllers
             if (!ModelState.IsValid)
             {
                 _notyf.Error("Hay errores de validacion en el formulario");
-
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-
                 return View(dto);
             }
 
@@ -166,30 +168,39 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Modificar",
+                    Detalle = $"Se actualizaron los datos del vehículo ID {dto.Id}. Nueva Placa: {dto.LicensePlate}",
+                    ControllerName = "Vehicles",
+                    ActionName = "Edit",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
+
                 _notyf.Success("Vehiculo actualizado exitosamente");
                 return RedirectToAction(nameof(Index));
             }
             catch (CustomValidationException ex)
             {
                 _notyf.Error(string.Join(", ", ex.Errors));
-
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-
                 return View(dto);
             }
             catch (BusinessException ex)
             {
                 _notyf.Error(ex.Message);
-
                 var customers = await _mediator.Send(new GetAllCustomersQuery());
                 ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-
                 return View(dto);
             }
         }
 
-        // Muestro la vista de confirmacion para eliminar un vehiculo
         public async Task<IActionResult> Delete(int id)
         {
             var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
@@ -202,14 +213,30 @@ namespace ParkingLot1._0.Web.Controllers
             return View(vehicle);
         }
 
-        // Confirmo la eliminacion del vehiculo
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
+                var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+                string plate = vehicle != null ? vehicle.LicensePlate : id.ToString();
+
                 await _mediator.Send(new DeleteVehicleCommand { Id = id });
+
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Eliminar",
+                    Detalle = $"Se eliminó el vehículo con Placa: {plate} (ID: {id})",
+                    ControllerName = "Vehicles",
+                    ActionName = "Delete",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
 
                 _notyf.Success("Vehiculo eliminado exitosamente");
                 return RedirectToAction(nameof(Index));

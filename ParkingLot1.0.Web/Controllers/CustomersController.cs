@@ -12,6 +12,9 @@ using ParkingLot1._0.Domain.Exceptions;
 using ParkingLot1._0.Web.DTOs.Customers;
 using ParkingLot1._0.Web.Models;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Domain.Entities;
+using ParkingLot1._0.Application.Common;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -20,18 +23,21 @@ namespace ParkingLot1._0.Web.Controllers
     {
         private readonly IMediator _mediator;
         private readonly INotyfService _notyf;
+        private readonly ApplicationDbContext _context;
 
-        public CustomersController(IMediator mediator, INotyfService notyf)
+        public CustomersController(IMediator mediator, INotyfService notyf, ApplicationDbContext context)
         {
             _mediator = mediator;
             _notyf = notyf;
+            _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: Customers
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
         {
             var customers = await _mediator.Send(new GetAllCustomersQuery());
 
-            var viewModel = customers.Select(c => new CustomerViewModel
+            var viewModelQuery = customers.Select(c => new CustomerViewModel
             {
                 Id = c.Id,
                 FullName = $"{c.FirstName} {c.LastName}",
@@ -39,9 +45,12 @@ namespace ParkingLot1._0.Web.Controllers
                 Phone = c.Phone,
                 TotalVehicles = c.Vehicles?.Count ?? 0,
                 HasActivePass = c.HasActiveMonthlyPass()
-            }).ToList();
+            }).AsQueryable();
 
-            return View(viewModel);
+            // Usamos el PagedList creado en la Fase 1 para segmentar la lista
+            var pagedViewModel = PagedList<CustomerViewModel>.Create(viewModelQuery, pageNumber, pageSize);
+
+            return View(pagedViewModel);
         }
 
         public IActionResult Create()
@@ -72,6 +81,20 @@ namespace ParkingLot1._0.Web.Controllers
                 };
 
                 await _mediator.Send(command);
+
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Crear",
+                    Detalle = $"Se registró al cliente {dto.FirstName} {dto.LastName} con Documento: {dto.DocumentNumber}",
+                    ControllerName = "Customers",
+                    ActionName = "Create",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
 
                 _notyf.Success("Cliente creado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -141,6 +164,20 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Modificar",
+                    Detalle = $"Se actualizaron los datos del cliente ID {dto.Id}. Nuevo nombre: {dto.FirstName} {dto.LastName}",
+                    ControllerName = "Customers",
+                    ActionName = "Edit",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
+
                 _notyf.Success("Cliente actualizado exitosamente");
                 return RedirectToAction(nameof(Index));
             }
@@ -174,7 +211,25 @@ namespace ParkingLot1._0.Web.Controllers
         {
             try
             {
+                // Obtenemos los detalles antes de borrar para el log
+                var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
+                string name = customer != null ? $"{customer.FirstName} {customer.LastName}" : id.ToString();
+
                 await _mediator.Send(new DeleteCustomerCommand { Id = id });
+
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Eliminar",
+                    Detalle = $"Se eliminó al cliente: {name} (ID: {id})",
+                    ControllerName = "Customers",
+                    ActionName = "Delete",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
 
                 _notyf.Success("Cliente eliminado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -205,7 +260,6 @@ namespace ParkingLot1._0.Web.Controllers
             {
                 CustomerId = customer.Id,
                 CustomerName = customer.FullName,
-
                 Vehicles = customer.Vehicles.Select(v => new VehicleViewModel
                 {
                     Id = v.Id,
@@ -230,6 +284,20 @@ namespace ParkingLot1._0.Web.Controllers
                         StartDate = model.StartDate,
                         RateId = 1
                     });
+
+                    // --- LOG DE AUDITORÍA ---
+                    _context.AuditLogs.Add(new AuditLog
+                    {
+                        Usuario = User.Identity?.Name ?? "Anónimo",
+                        Accion = "Compra Mensualidad",
+                        Detalle = $"El cliente ID {model.CustomerId} adquirió una mensualidad para el vehículo ID {model.VehicleId}",
+                        ControllerName = "Customers",
+                        ActionName = "BuyPass",
+                        IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                        FechaRegistro = DateTime.Now
+                    });
+                    await _context.SaveChangesAsync();
+                    // -------------------------
 
                     _notyf.Success("Mensualidad comprada exitosamente");
                     return RedirectToAction(nameof(Index));

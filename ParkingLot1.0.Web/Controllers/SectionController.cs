@@ -1,20 +1,29 @@
 using ParkingLot1._0.Application.SimpleMediator;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLot1._0.Application.Features.Sections.Commands.CreateSection;
+using ParkingLot1._0.Application.SimpleMediator;
+using Microsoft.AspNetCore.Mvc;
+using ParkingLot1._0.Application.Features.Sections.Commands.CreateSection;
 using ParkingLot1._0.Application.Features.Sections.Queries.GetSectionsList;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingLot1._0.Web.Controllers
 {
+    [Authorize]
     public class SectionsController : Controller
     {
         private readonly IMediator _mediator;
         private readonly INotyfService _notyf;
+        private readonly ApplicationDbContext _context; // Añadido para los logs
 
-        public SectionsController(IMediator mediator, INotyfService notyf)
+        public SectionsController(IMediator mediator, INotyfService notyf, ApplicationDbContext context)
         {
             _mediator = mediator;
             _notyf = notyf;
+            _context = context;
         }
 
         public async Task<IActionResult> Index([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5)
@@ -27,6 +36,7 @@ namespace ParkingLot1._0.Web.Controllers
 
             var result = await _mediator.Send(query);
 
+            // Pasamos el resultado directo porque tu backend ya se encarga de paginarlo
             return View(result);
         }
 
@@ -46,10 +56,32 @@ namespace ParkingLot1._0.Web.Controllers
                 return View(command);
             }
 
-            await _mediator.Send(command);
+            try
+            {
+                await _mediator.Send(command);
 
-            _notyf.Success("Seccion creada exitosamente");
-            return RedirectToAction(nameof(Index));
+                // --- LOG DE AUDITORÍA ---
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Crear",
+                    Detalle = $"Se creó una nueva sección: {command.Name}.",
+                    ControllerName = "Sections",
+                    ActionName = "Create",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                // -------------------------
+
+                _notyf.Success("Seccion creada exitosamente");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _notyf.Error($"Error al crear la sección: {ex.Message}");
+                return View(command);
+            }
         }
     }
 }

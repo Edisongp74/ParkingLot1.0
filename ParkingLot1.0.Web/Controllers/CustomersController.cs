@@ -32,7 +32,6 @@ namespace ParkingLot1._0.Web.Controllers
             _context = context;
         }
 
-        // GET: Customers
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
         {
             var customers = await _mediator.Send(new GetAllCustomersQuery());
@@ -82,7 +81,7 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
-                // --- LOG DE AUDITORÍA ---
+
                 _context.AuditLogs.Add(new AuditLog
                 {
                     Usuario = User.Identity?.Name ?? "Anónimo",
@@ -94,7 +93,6 @@ namespace ParkingLot1._0.Web.Controllers
                     FechaRegistro = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
-                // -------------------------
 
                 _notyf.Success("Cliente creado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -164,7 +162,6 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
-                // --- LOG DE AUDITORÍA ---
                 _context.AuditLogs.Add(new AuditLog
                 {
                     Usuario = User.Identity?.Name ?? "Anónimo",
@@ -176,7 +173,7 @@ namespace ParkingLot1._0.Web.Controllers
                     FechaRegistro = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
-                // -------------------------
+
 
                 _notyf.Success("Cliente actualizado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -211,13 +208,11 @@ namespace ParkingLot1._0.Web.Controllers
         {
             try
             {
-                // Obtenemos los detalles antes de borrar para el log
                 var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
                 string name = customer != null ? $"{customer.FirstName} {customer.LastName}" : id.ToString();
 
                 await _mediator.Send(new DeleteCustomerCommand { Id = id });
 
-                // --- LOG DE AUDITORÍA ---
                 _context.AuditLogs.Add(new AuditLog
                 {
                     Usuario = User.Identity?.Name ?? "Anónimo",
@@ -229,7 +224,7 @@ namespace ParkingLot1._0.Web.Controllers
                     FechaRegistro = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
-                // -------------------------
+
 
                 _notyf.Success("Cliente eliminado exitosamente");
                 return RedirectToAction(nameof(Index));

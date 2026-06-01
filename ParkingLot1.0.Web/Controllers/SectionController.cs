@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador, Operador")]
     public class SectionsController : Controller
     {
         private readonly IMediator _mediator;

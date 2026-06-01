@@ -18,7 +18,9 @@ using ParkingLot1._0.Application.Common;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador, Operador")]
+
     public class VehiclesController : Controller
     {
         private readonly IMediator _mediator;

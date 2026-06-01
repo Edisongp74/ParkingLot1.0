@@ -10,6 +10,8 @@
         public string Phone { get; set; } = string.Empty;
         public string CustomerType { get; set; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
+        public string? ApplicationUserId { get; set; }
+
 
         public bool HasActiveMonthlyPass()
         {

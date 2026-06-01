@@ -56,11 +56,13 @@ builder.Services.AddScoped<SeedDb>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 var app = builder.Build();
 
+/*
 using (var scope = app.Services.CreateScope())
 {
     var seedDb = scope.ServiceProvider.GetRequiredService<SeedDb>();
     await seedDb.SeedAsync();
 }
+*/
 
 if (!app.Environment.IsDevelopment())
 {

@@ -1,0 +1,44 @@
+﻿@model List<ParkingLot1._0.Domain.Entities.Vehicle>
+
+@{
+    ViewData["Title"] = "My Vehicles";
+}
+
+<div class="container mt-4">
+    <h2>My Vehicles</h2>
+
+    <a asp-action="CreateMyVehicle" class="btn btn-primary mb-3">Register New Vehicle</a>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info mt-3">
+            You do not have any registered vehicles.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>License Plate</th>
+                        <th>Type</th>
+                        <th>Brand</th>
+                        <th>Color</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vehicle in Model)
+                    {
+                        <tr>
+                            <td>@vehicle.LicensePlate</td>
+                            <td>@vehicle.Type</td>
+                            <td>@vehicle.Brand</td>
+                            <td>@vehicle.Color</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

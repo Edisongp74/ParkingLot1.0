@@ -1,71 +1,104 @@
-using ParkingLot1._0.Application.SimpleMediator;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using ParkingLot1._0.Application.Common;
+using ParkingLot1._0.Application.Exceptions;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Vehicles.Commands.CreateVehicle;
 using ParkingLot1._0.Application.Features.Vehicles.Commands.DeleteVehicle;
 using ParkingLot1._0.Application.Features.Vehicles.Commands.UpdateVehicle;
 using ParkingLot1._0.Application.Features.Vehicles.Queries.GetAllVehicles;
 using ParkingLot1._0.Application.Features.Vehicles.Queries.GetVehicleById;
-using ParkingLot1._0.Application.Exceptions;
-using ParkingLot1._0.Domain.Exceptions;
-using ParkingLot1._0.Web.DTOs.Vehicles;
-using AspNetCoreHero.ToastNotification.Abstractions;
-using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Application.Interfaces;
+using ParkingLot1._0.Application.SimpleMediator;
 using ParkingLot1._0.Domain.Entities;
-using ParkingLot1._0.Application.Common;
+using ParkingLot1._0.Domain.Exceptions;
+using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Web.DTOs.Vehicles;
 
 namespace ParkingLot1._0.Web.Controllers
 {
-    [Authorize(Roles = "Administrador")]
-    [Authorize(Roles = "Administrador, Operador")]
-
+    [Authorize]
     public class VehiclesController : Controller
     {
         private readonly IMediator _mediator;
         private readonly INotyfService _notyf;
         private readonly ApplicationDbContext _context;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public VehiclesController(IMediator mediator, INotyfService notyf, ApplicationDbContext context)
+        public VehiclesController(
+            IMediator mediator,
+            INotyfService notyf,
+            ApplicationDbContext context,
+            ICustomerRepository customerRepository,
+            IVehicleRepository vehicleRepository)
         {
             _mediator = mediator;
             _notyf = notyf;
             _context = context;
+            _customerRepository = customerRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
-        // GET: Vehicles
-        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
+
+        [Authorize]
+        public async Task<IActionResult> MyVehicles()
         {
-            // Traemos los vehículos desde el Query Handler
-            var vehicles = await _mediator.Send(new GetAllVehiclesQuery());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Convertimos la colección a un formato genérico consultable
-            var vehiclesQuery = vehicles.Cast<object>().AsQueryable();
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            // Creamos una única lista pagiada limpia de tipo object
-            var pagedVehicles = PagedList<object>.Create(vehiclesQuery, pageNumber, pageSize);
+            var customer = await _customerRepository.GetByApplicationUserIdAsync(userId);
 
-            return View(pagedVehicles);
+            if (customer == null)
+            {
+                _notyf.Warning("Your account is not linked to a customer profile.");
+                return RedirectToAction("Index", "Home");
+            }
+
+            var vehicles = await _vehicleRepository.GetByCustomerIdAsync(customer.Id);
+
+            return View(vehicles);
         }
 
-        public async Task<IActionResult> Create()
+        [Authorize]
+        public IActionResult CreateMyVehicle()
         {
-            var customers = await _mediator.Send(new GetAllCustomersQuery());
-            ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
             return View(new CreateVehicleDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateVehicleDto dto)
+        [Authorize]
+        public async Task<IActionResult> CreateMyVehicle(CreateVehicleDto dto)
         {
             if (!ModelState.IsValid)
             {
-                _notyf.Error("Hay errores de validacion en el formulario");
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
+                _notyf.Error("There are validation errors in the form.");
                 return View(dto);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var customer = await _customerRepository.GetByApplicationUserIdAsync(userId);
+
+            if (customer == null)
+            {
+                _notyf.Warning("Your account is not linked to a customer profile.");
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!customer.CanAddVehicle())
+            {
+                _notyf.Warning("You cannot register more than 3 vehicles.");
+                return RedirectToAction(nameof(MyVehicles));
             }
 
             try
@@ -76,183 +109,95 @@ namespace ParkingLot1._0.Web.Controllers
                     Type = dto.Type,
                     Brand = dto.Brand,
                     Color = dto.Color,
-                    CustomerId = dto.CustomerId
+                    CustomerId = customer.Id
                 };
 
                 await _mediator.Send(command);
 
-                // --- LOG DE AUDITORÍA ---
                 _context.AuditLogs.Add(new AuditLog
                 {
-                    Usuario = User.Identity?.Name ?? "Anónimo",
-                    Accion = "Crear",
-                    Detalle = $"Se registró el vehículo con Placa: {dto.LicensePlate}, Marca: {dto.Brand}, Color: {dto.Color}",
+                    Usuario = User.Identity?.Name ?? "Anonymous",
+                    Accion = "Create",
+                    Detalle = $"Customer created vehicle with plate: {dto.LicensePlate}",
                     ControllerName = "Vehicles",
-                    ActionName = "Create",
+                    ActionName = "CreateMyVehicle",
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
                     FechaRegistro = DateTime.Now
                 });
-                await _context.SaveChangesAsync();
-                // -------------------------
 
-                _notyf.Success("Vehiculo creado exitosamente");
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
+
+                _notyf.Success("Vehicle created successfully.");
+                return RedirectToAction(nameof(MyVehicles));
             }
             catch (CustomValidationException ex)
             {
                 _notyf.Error(string.Join(", ", ex.Errors));
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
                 return View(dto);
             }
             catch (BusinessException ex)
             {
                 _notyf.Error(ex.Message);
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName");
                 return View(dto);
             }
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [Authorize]
+        [Authorize]
+        public async Task<IActionResult> LinkMyCustomer()
         {
-            var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = User.Identity?.Name ?? "Cliente";
 
-            if (vehicle == null)
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var existingCustomer = await _customerRepository.GetByApplicationUserIdAsync(userId);
+
+            if (existingCustomer != null)
             {
-                return NotFound();
+                _notyf.Success("Your account is already linked to a customer profile.");
+                return RedirectToAction(nameof(MyVehicles));
             }
 
-            var dto = new UpdateVehicleDto
+            var customer = await _customerRepository.GetFirstCustomerWithoutUserAsync();
+
+            if (customer != null)
             {
-                Id = vehicle.Id,
-                LicensePlate = vehicle.LicensePlate,
-                Type = vehicle.Type,
-                Brand = vehicle.Brand,
-                Color = vehicle.Color,
-                CustomerId = vehicle.CustomerId
+                customer.ApplicationUserId = userId;
+                await _customerRepository.UpdateAsync(customer);
+
+                _notyf.Success("Your account was linked successfully.");
+                return RedirectToAction(nameof(MyVehicles));
+            }
+
+            var newCustomer = new Customer
+            {
+                FirstName = userName,
+                LastName = "Auto",
+                DocumentType = "CC",
+                DocumentNumber = $"AUTO-{Guid.NewGuid().ToString("N").Substring(0, 8)}",
+                Phone = "0000000000",
+                CustomerType = "Regular",
+                ApplicationUserId = userId
             };
 
-            var customers = await _mediator.Send(new GetAllCustomersQuery());
-            ViewBag.Customers = new SelectList(customers, "Id", "FirstName", vehicle.CustomerId);
+            await _customerRepository.AddAsync(newCustomer);
 
-            return View(dto);
+            _notyf.Success("A new customer profile was created and linked successfully.");
+            return RedirectToAction(nameof(MyVehicles));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, UpdateVehicleDto dto)
+        [Authorize(Roles = "Administrador,Operador")]
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
         {
-            if (id != dto.Id)
-            {
-                return NotFound();
-            }
+            var vehicles = await _mediator.Send(new GetAllVehiclesQuery());
 
-            if (!ModelState.IsValid)
-            {
-                _notyf.Error("Hay errores de validacion en el formulario");
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-                return View(dto);
-            }
+            var vehiclesQuery = vehicles.Cast<object>().AsQueryable();
 
-            try
-            {
-                var command = new UpdateVehicleCommand
-                {
-                    Id = dto.Id,
-                    LicensePlate = dto.LicensePlate,
-                    Type = dto.Type,
-                    Brand = dto.Brand,
-                    Color = dto.Color,
-                    CustomerId = dto.CustomerId
-                };
+            var pagedVehicles = PagedList<object>.Create(vehiclesQuery, pageNumber, pageSize);
 
-                await _mediator.Send(command);
-
-                // --- LOG DE AUDITORÍA ---
-                _context.AuditLogs.Add(new AuditLog
-                {
-                    Usuario = User.Identity?.Name ?? "Anónimo",
-                    Accion = "Modificar",
-                    Detalle = $"Se actualizaron los datos del vehículo ID {dto.Id}. Nueva Placa: {dto.LicensePlate}",
-                    ControllerName = "Vehicles",
-                    ActionName = "Edit",
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
-                    FechaRegistro = DateTime.Now
-                });
-                await _context.SaveChangesAsync();
-                // -------------------------
-
-                _notyf.Success("Vehiculo actualizado exitosamente");
-                return RedirectToAction(nameof(Index));
-            }
-            catch (CustomValidationException ex)
-            {
-                _notyf.Error(string.Join(", ", ex.Errors));
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-                return View(dto);
-            }
-            catch (BusinessException ex)
-            {
-                _notyf.Error(ex.Message);
-                var customers = await _mediator.Send(new GetAllCustomersQuery());
-                ViewBag.Customers = new SelectList(customers, "Id", "FirstName", dto.CustomerId);
-                return View(dto);
-            }
-        }
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
-
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicle);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            try
-            {
-                var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
-                string plate = vehicle != null ? vehicle.LicensePlate : id.ToString();
-
-                await _mediator.Send(new DeleteVehicleCommand { Id = id });
-
-                // --- LOG DE AUDITORÍA ---
-                _context.AuditLogs.Add(new AuditLog
-                {
-                    Usuario = User.Identity?.Name ?? "Anónimo",
-                    Accion = "Eliminar",
-                    Detalle = $"Se eliminó el vehículo con Placa: {plate} (ID: {id})",
-                    ControllerName = "Vehicles",
-                    ActionName = "Delete",
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
-                    FechaRegistro = DateTime.Now
-                });
-                await _context.SaveChangesAsync();
-                // -------------------------
-
-                _notyf.Success("Vehiculo eliminado exitosamente");
-                return RedirectToAction(nameof(Index));
-            }
-            catch (NotFoundException ex)
-            {
-                _notyf.Error(ex.Message);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (BusinessException ex)
-            {
-                _notyf.Error(ex.Message);
-                return RedirectToAction(nameof(Index));
-            }
+            return View(pagedVehicles);
         }
     }
 }

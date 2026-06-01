@@ -15,5 +15,12 @@ namespace ParkingLot1._0.Application.Interfaces
 
 
         Task DeleteAsync(int id);
+
+        Task<Customer?> GetByApplicationUserIdAsync(string applicationUserId);
+
+        Task<Customer?> GetFirstCustomerWithoutUserAsync();
+
+       
+
     }
 }

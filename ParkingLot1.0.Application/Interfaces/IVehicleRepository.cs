@@ -19,5 +19,7 @@ namespace ParkingLot1._0.Application.Interfaces
 
         // Elimino un vehiculo por su Id
         Task DeleteAsync(int id);
+
+        Task<List<Vehicle>> GetByCustomerIdAsync(int customerId);
     }
 }

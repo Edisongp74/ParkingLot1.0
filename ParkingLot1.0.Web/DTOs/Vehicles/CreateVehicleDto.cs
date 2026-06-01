@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ParkingLot1._0.Web.DTOs.Vehicles
 {
-    // DTO para crear un vehiculo con Data Annotations para validacion del lado del cliente
     public class CreateVehicleDto
     {
         [Required(ErrorMessage = "La placa es obligatoria")]
@@ -22,9 +21,5 @@ namespace ParkingLot1._0.Web.DTOs.Vehicles
         [StringLength(20, ErrorMessage = "El color no puede exceder 20 caracteres")]
         [Display(Name = "Color")]
         public string Color { get; set; } = string.Empty;
-
-        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un cliente valido")]
-        [Display(Name = "Cliente")]
-        public int CustomerId { get; set; }
     }
 }

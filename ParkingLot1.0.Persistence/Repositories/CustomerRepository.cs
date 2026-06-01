@@ -55,5 +55,19 @@ namespace ParkingLot1._0.Persistence.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Customer?> GetByApplicationUserIdAsync(string applicationUserId)
+        {
+            return await _context.Customers
+                .Include(c => c.Vehicles)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == applicationUserId);
+        }
+        public async Task<Customer?> GetFirstCustomerWithoutUserAsync()
+        {
+            return await _context.Customers
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == null);
+        }
+
+        
     }
 }

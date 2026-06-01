@@ -192,6 +192,35 @@
                         </li>
                     }
 
+                    @if (User.IsInRole("Customer"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Vehicles" asp-action="MyVehicles">
+                                My Vehicles
+                            </a>
+                        </li>
+                    }
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Vehicles" asp-action="MyVehicles">
+                                <i class="bi bi-car-front"></i> My Vehicles
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Vehicles" asp-action="CreateMyVehicle">
+                                <i class="bi bi-plus-circle"></i> Register My Vehicle
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Vehicles" asp-action="LinkMyCustomer">
+                                <i class="bi bi-link-45deg"></i> Link My Customer
+                            </a>
+                        </li>
+                    }
+
                 </ul>
             </nav>
         </aside>

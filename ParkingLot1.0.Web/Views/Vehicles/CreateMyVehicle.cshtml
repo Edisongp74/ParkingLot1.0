@@ -1,0 +1,44 @@
+﻿@model ParkingLot1._0.Web.DTOs.Vehicles.CreateVehicleDto
+
+@{
+    ViewData["Title"] = "Register My Vehicle";
+}
+
+<div class="container mt-4">
+    <h2>Register My Vehicle</h2>
+
+    <form asp-action="CreateMyVehicle" method="post">
+        <div class="mb-3">
+            <label asp-for="LicensePlate" class="form-label"></label>
+            <input asp-for="LicensePlate" class="form-control" />
+            <span asp-validation-for="LicensePlate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Type" class="form-label"></label>
+            <input asp-for="Type" class="form-control" />
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Brand" class="form-label"></label>
+            <input asp-for="Brand" class="form-control" />
+            <span asp-validation-for="Brand" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Color" class="form-label"></label>
+            <input asp-for="Color" class="form-control" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="MyVehicles" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

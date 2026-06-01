@@ -5,7 +5,7 @@
 namespace ParkingLot1._0.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AgregarMensualidades : Migration
+    public partial class InitialState : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

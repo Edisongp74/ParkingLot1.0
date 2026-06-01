@@ -117,16 +117,10 @@
                 {
                     <span>Hola @User.Identity.Name</span>
 
-                    <form class="logout-form"
-                          asp-area="Identity"
-                          asp-page="/Account/Logout"
-                          method="post">
-
+                    <form class="logout-form" asp-controller="Account" asp-action="Logout" method="post">
                         <button type="submit" class="logout-btn">
-                            <i class="bi bi-box-arrow-right"></i>
-                            Logout
+                            <i class="bi bi-box-arrow-right"></i> Logout
                         </button>
-
                     </form>
                 }
                 else
@@ -147,69 +141,59 @@
         </header>
 
         <aside class="left-sidebar">
-
             <nav class="sidebar-nav">
-
                 <ul id="sidebarnav">
 
                     <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Home"
-                           asp-action="Index">
+                        <a class="sidebar-link" asp-controller="Home" asp-action="Index">
                             <i class="bi bi-speedometer2"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Customers"
-                           asp-action="Index">
-                            <i class="bi bi-people"></i>
-                            <span>Clientes</span>
-                        </a>
-                    </li>
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Operador"))
+                    {
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Customers" asp-action="Index">
+                                <i class="bi bi-people"></i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Vehicles"
-                           asp-action="Index">
-                            <i class="bi bi-car-front"></i>
-                            <span>Vehículos</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Vehicles" asp-action="Index">
+                                <i class="bi bi-car-front"></i>
+                                <span>Vehículos</span>
+                            </a>
+                        </li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Roles"
-                           asp-action="Index">
-                            <i class="bi bi-shield-lock"></i>
-                            <span>Roles</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Sections" asp-action="Index">
+                                <i class="bi bi-layers-half"></i>
+                                <span>Secciones</span>
+                            </a>
+                        </li>
+                    }
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Users"
-                           asp-action="Index">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Usuarios</span>
-                        </a>
-                    </li>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Roles" asp-action="Index">
+                                <i class="bi bi-shield-lock"></i>
+                                <span>Roles</span>
+                            </a>
+                        </li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link"
-                           asp-controller="Sections"
-                           asp-action="Index">
-                            <i class="bi bi-layers-half"></i>
-                            <span>Secciones</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Users" asp-action="Index">
+                                <i class="bi bi-person-gear"></i>
+                                <span>Usuarios</span>
+                            </a>
+                        </li>
+                    }
 
                 </ul>
-
             </nav>
-
         </aside>
 
         <div class="page-wrapper">

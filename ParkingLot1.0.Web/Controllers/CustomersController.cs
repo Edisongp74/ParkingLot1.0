@@ -255,6 +255,11 @@ namespace ParkingLot1._0.Web.Controllers
                 _notyf.Error(ex.Message);
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpGet]

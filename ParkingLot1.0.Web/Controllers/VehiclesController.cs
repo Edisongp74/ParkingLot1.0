@@ -231,5 +231,60 @@ namespace ParkingLot1._0.Web.Controllers
                 vehicleId = vehicle.Id
             });
         }
+        [Authorize(Roles = "Administrador,Operador")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+
+            if (vehicle == null)
+                return NotFound();
+
+            return View(vehicle);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Operador")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var vehicle = await _mediator.Send(new GetVehicleByIdQuery { Id = id });
+                string plate = vehicle != null ? vehicle.LicensePlate : id.ToString();
+
+                await _mediator.Send(new DeleteVehicleCommand { Id = id });
+
+                _context.AuditLogs.Add(new AuditLog
+                {
+                    Usuario = User.Identity?.Name ?? "Anónimo",
+                    Accion = "Eliminar",
+                    Detalle = $"Se eliminó el vehículo con placa: {plate} (ID: {id})",
+                    ControllerName = "Vehicles",
+                    ActionName = "Delete",
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                    FechaRegistro = DateTime.Now
+                });
+
+                await _context.SaveChangesAsync();
+
+                _notyf.Success("Vehículo eliminado exitosamente");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (NotFoundException ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _notyf.Error(ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

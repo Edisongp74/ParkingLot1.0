@@ -49,11 +49,32 @@ namespace ParkingLot1._0.Persistence.Repositories
         public async Task DeleteAsync(int id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle != null)
-            {
-                _context.Vehicles.Remove(vehicle);
-                await _context.SaveChangesAsync();
-            }
+
+            if (vehicle == null)
+                return;
+
+            var monthlyPassIds = await _context.MonthlyPasses
+                .Where(m => m.VehicleId == id)
+                .Select(m => m.Id)
+                .ToListAsync();
+
+            var payments = await _context.Payments
+                .Where(p => p.MonthlyMembershipId.HasValue && monthlyPassIds.Contains(p.MonthlyMembershipId.Value))
+                .ToListAsync();
+
+            var monthlyPasses = await _context.MonthlyPasses
+                .Where(m => m.VehicleId == id)
+                .ToListAsync();
+
+            if (payments.Any())
+                _context.Payments.RemoveRange(payments);
+
+            if (monthlyPasses.Any())
+                _context.MonthlyPasses.RemoveRange(monthlyPasses);
+
+            _context.Vehicles.Remove(vehicle);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -45,13 +45,14 @@
                                 Vencido
                             </span>
                             <a asp-action="BuyPass" asp-route-id="@customer.Id"
-                               class="btn btn-sm text-white rounded-pill px-3 shadow-sm"
-                               style="background-color: #6f42c1; font-size: 0.8rem;">
+                                   class="btn btn-sm text-white rounded-pill px-3 shadow-sm"
+                                   style="background-color: #6f42c1; font-size: 0.8rem;">
                                 <i class="bi bi-cart-plus-fill me-1"></i> Comprar
                             </a>
                         </div>
                     }
                 </td>
+
                 <td class="text-center align-middle">
                     <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-warning btn-sm">Editar</a>
                     <a asp-action="Delete" asp-route-id="@customer.Id" class="btn btn-danger btn-sm">Eliminar</a>
@@ -69,20 +70,18 @@
     <nav aria-label="Paginacion">
         <ul class="pagination pagination-sm mb-0">
             <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
-                <a class="page-item"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(Model.PageIndex - 1)"
-                   class="page-link shadow-sm">
-                    <span class="page-link"><i class="bi bi-chevron-left"></i> Anterior</span>
+                <a asp-action="Index"
+                       asp-route-pageNumber="@(Model.PageIndex - 1)"
+                       class="page-link shadow-sm">
+                    <i class="bi bi-chevron-left"></i> Anterior
                 </a>
             </li>
 
             <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
-                <a class="page-item"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(Model.PageIndex + 1)"
-                   class="page-link shadow-sm">
-                    <span class="page-link">Siguiente <i class="bi bi-chevron-right"></i></span>
+                <a asp-action="Index"
+                       asp-route-pageNumber="@(Model.PageIndex + 1)"
+                       class="page-link shadow-sm">
+                    Siguiente <i class="bi bi-chevron-right"></i>
                 </a>
             </li>
         </ul>

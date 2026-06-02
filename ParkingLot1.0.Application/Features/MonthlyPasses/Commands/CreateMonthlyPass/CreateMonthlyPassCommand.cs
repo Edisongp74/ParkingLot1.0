@@ -6,7 +6,7 @@ namespace ParkingLot1._0.Application.Features.MonthlyPasses.Commands.CreateMonth
     {
         public int CustomerId { get; set; }
         public int VehicleId { get; set; }
+        public DateTime StartDate { get; set; }
         public int RateId { get; set; }
-        public DateTime StartDate { get; set; } = DateTime.Now;
     }
 }

@@ -24,6 +24,8 @@ namespace ParkingLot1._0.Persistence.Contexts
         public DbSet<Payment> Payments { get; set; }
         public DbSet<MonthlyPass> MonthlyPasses { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

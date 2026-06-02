@@ -1,20 +1,22 @@
-using ParkingLot1._0.Application.SimpleMediator;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ParkingLot1._0.Application.Common;
+using ParkingLot1._0.Application.Exceptions;
 using ParkingLot1._0.Application.Features.Customers.Commands.CreateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.DeleteCustomer;
 using ParkingLot1._0.Application.Features.Customers.Commands.UpdateCustomer;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetAllCustomers;
 using ParkingLot1._0.Application.Features.Customers.Queries.GetCustomerById;
 using ParkingLot1._0.Application.Features.MonthlyPasses.Commands.CreateMonthlyPass;
-using ParkingLot1._0.Application.Exceptions;
+using ParkingLot1._0.Application.Interfaces;
+using ParkingLot1._0.Application.SimpleMediator;
+using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Domain.Exceptions;
+using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Web.DTOs.Customers;
 using ParkingLot1._0.Web.Models;
-using AspNetCoreHero.ToastNotification.Abstractions;
-using ParkingLot1._0.Persistence.Contexts;
-using ParkingLot1._0.Domain.Entities;
-using ParkingLot1._0.Application.Common;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -24,12 +26,21 @@ namespace ParkingLot1._0.Web.Controllers
         private readonly IMediator _mediator;
         private readonly INotyfService _notyf;
         private readonly ApplicationDbContext _context;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public CustomersController(IMediator mediator, INotyfService notyf, ApplicationDbContext context)
+        public CustomersController(
+            IMediator mediator,
+            INotyfService notyf,
+            ApplicationDbContext context,
+            ICustomerRepository customerRepository,
+            IVehicleRepository vehicleRepository)
         {
             _mediator = mediator;
             _notyf = notyf;
             _context = context;
+            _customerRepository = customerRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
@@ -46,7 +57,6 @@ namespace ParkingLot1._0.Web.Controllers
                 HasActivePass = c.HasActiveMonthlyPass()
             }).AsQueryable();
 
-            // Usamos el PagedList creado en la Fase 1 para segmentar la lista
             var pagedViewModel = PagedList<CustomerViewModel>.Create(viewModelQuery, pageNumber, pageSize);
 
             return View(pagedViewModel);
@@ -81,7 +91,6 @@ namespace ParkingLot1._0.Web.Controllers
 
                 await _mediator.Send(command);
 
-
                 _context.AuditLogs.Add(new AuditLog
                 {
                     Usuario = User.Identity?.Name ?? "Anónimo",
@@ -92,6 +101,7 @@ namespace ParkingLot1._0.Web.Controllers
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
                     FechaRegistro = DateTime.Now
                 });
+
                 await _context.SaveChangesAsync();
 
                 _notyf.Success("Cliente creado exitosamente");
@@ -172,8 +182,8 @@ namespace ParkingLot1._0.Web.Controllers
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
                     FechaRegistro = DateTime.Now
                 });
-                await _context.SaveChangesAsync();
 
+                await _context.SaveChangesAsync();
 
                 _notyf.Success("Cliente actualizado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -223,8 +233,8 @@ namespace ParkingLot1._0.Web.Controllers
                     IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
                     FechaRegistro = DateTime.Now
                 });
-                await _context.SaveChangesAsync();
 
+                await _context.SaveChangesAsync();
 
                 _notyf.Success("Cliente eliminado exitosamente");
                 return RedirectToAction(nameof(Index));
@@ -242,69 +252,74 @@ namespace ParkingLot1._0.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> BuyPass(int id)
+        [Authorize]
+        public async Task<IActionResult> BuyPass(int id, int? vehicleId)
         {
-            var customer = await _mediator.Send(new GetCustomerByIdQuery { Id = id });
-
+            var customer = await _customerRepository.GetByIdAsync(id);
             if (customer == null)
-            {
                 return NotFound();
-            }
 
-            var viewModel = new BuyMonthlyPassViewModel
+            var vehicles = await _vehicleRepository.GetByCustomerIdAsync(id);
+
+            var model = new BuyMonthlyPassViewModel
             {
-                CustomerId = customer.Id,
-                CustomerName = customer.FullName,
-                Vehicles = customer.Vehicles.Select(v => new VehicleViewModel
+                CustomerId = id,
+                CustomerName = $"{customer.FirstName} {customer.LastName}",
+                VehicleId = vehicleId ?? 0,
+                StartDate = DateTime.Today,
+                Vehicles = vehicles.Select(v => new VehicleViewModel
                 {
                     Id = v.Id,
-                    Plate = v.LicensePlate
+                    Plate = $"{v.LicensePlate} - {v.Brand}"
                 }).ToList()
             };
 
-            return View(viewModel);
+            return View(model);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> BuyPass(BuyMonthlyPassViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                var vehicles = await _vehicleRepository.GetByCustomerIdAsync(model.CustomerId);
+                model.Vehicles = vehicles.Select(v => new VehicleViewModel
                 {
-                    await _mediator.Send(new CreateMonthlyPassCommand
-                    {
-                        CustomerId = model.CustomerId,
-                        VehicleId = model.VehicleId,
-                        StartDate = model.StartDate,
-                        RateId = 1
-                    });
+                    Id = v.Id,
+                    Plate = $"{v.LicensePlate} - {v.Brand}"
+                }).ToList();
 
-                    // --- LOG DE AUDITORÍA ---
-                    _context.AuditLogs.Add(new AuditLog
-                    {
-                        Usuario = User.Identity?.Name ?? "Anónimo",
-                        Accion = "Compra Mensualidad",
-                        Detalle = $"El cliente ID {model.CustomerId} adquirió una mensualidad para el vehículo ID {model.VehicleId}",
-                        ControllerName = "Customers",
-                        ActionName = "BuyPass",
-                        IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
-                        FechaRegistro = DateTime.Now
-                    });
-                    await _context.SaveChangesAsync();
-                    // -------------------------
-
-                    _notyf.Success("Mensualidad comprada exitosamente");
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (BusinessException ex)
-                {
-                    _notyf.Error(ex.Message);
-                    return View(model);
-                }
+                return View(model);
             }
 
-            return View(model);
+            try
+            {
+                var monthlyMembershipId = await _mediator.Send(new CreateMonthlyPassCommand
+                {
+                    CustomerId = model.CustomerId,
+                    VehicleId = model.VehicleId,
+                    StartDate = model.StartDate,
+                    RateId = 1
+                });
+
+                TempData["CustomerId"] = model.CustomerId;
+                TempData["MonthlyMembershipId"] = monthlyMembershipId;
+
+                return RedirectToAction("Create", "Payments");
+            }
+            catch (BusinessException ex)
+            {
+                var vehicles = await _vehicleRepository.GetByCustomerIdAsync(model.CustomerId);
+                model.Vehicles = vehicles.Select(v => new VehicleViewModel
+                {
+                    Id = v.Id,
+                    Plate = $"{v.LicensePlate} - {v.Brand}"
+                }).ToList();
+
+                _notyf.Error(ex.Message);
+                return View(model);
+            }
         }
     }
 }

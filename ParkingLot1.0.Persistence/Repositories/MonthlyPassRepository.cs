@@ -15,13 +15,16 @@ namespace ParkingLot1._0.Persistence.Repositories
 
         public async Task<int> AddAsync(MonthlyPass monthlyPass)
         {
-            monthlyPass.Customer = null;
-            monthlyPass.Vehicle = null;
-            monthlyPass.Rate = null;
-
-            _context.MonthlyPasses.Add(monthlyPass);
-            await _context.SaveChangesAsync();
-            return monthlyPass.Id;
+            try
+            {
+                _context.MonthlyPasses.Add(monthlyPass);
+                await _context.SaveChangesAsync();
+                return monthlyPass.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.InnerException?.Message ?? ex.Message, ex);
+            }
         }
     }
 }

@@ -25,6 +25,7 @@
                         <th>Type</th>
                         <th>Brand</th>
                         <th>Color</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,6 +36,14 @@
                             <td>@vehicle.Type</td>
                             <td>@vehicle.Brand</td>
                             <td>@vehicle.Color</td>
+                            <td>
+                                <a asp-controller="Vehicles"
+                                       asp-action="BuyPassForMyVehicle"
+                                       asp-route-vehicleId="@vehicle.Id"
+                                       class="btn btn-success btn-sm">
+                                    Buy Monthly Pass
+                                </a>
+                            </td>
                         </tr>
                     }
                 </tbody>

@@ -142,7 +142,7 @@ namespace ParkingLot1._0.Web.Controllers
             }
         }
 
-        [Authorize]
+        
         [Authorize]
         public async Task<IActionResult> LinkMyCustomer()
         {
@@ -198,6 +198,38 @@ namespace ParkingLot1._0.Web.Controllers
             var pagedVehicles = PagedList<object>.Create(vehiclesQuery, pageNumber, pageSize);
 
             return View(pagedVehicles);
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> BuyPassForMyVehicle(int vehicleId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var customer = await _customerRepository.GetByApplicationUserIdAsync(userId);
+
+            if (customer == null)
+            {
+                _notyf.Warning("Your account is not linked to a customer profile.");
+                return RedirectToAction(nameof(MyVehicles));
+            }
+
+            var vehicles = await _vehicleRepository.GetByCustomerIdAsync(customer.Id);
+            var vehicle = vehicles.FirstOrDefault(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+            {
+                _notyf.Error("Vehicle not found or does not belong to your account.");
+                return RedirectToAction(nameof(MyVehicles));
+            }
+
+            return RedirectToAction("BuyPass", "Customers", new
+            {
+                id = customer.Id,
+                vehicleId = vehicle.Id
+            });
         }
     }
 }

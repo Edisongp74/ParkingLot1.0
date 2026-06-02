@@ -25,7 +25,6 @@ namespace ParkingLot1._0.Application.Features.MonthlyPasses.Commands.CreateMonth
                 Status = "Active"
             };
 
-            // Usamos el metodo del repositorio
             return await _repository.AddAsync(entity);
         }
     }

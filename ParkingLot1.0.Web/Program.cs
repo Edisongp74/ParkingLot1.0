@@ -1,15 +1,18 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application;
+using ParkingLot1._0.Application.Interfaces.Services;
+using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Persistence;
 using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Persistence.Identity;
 using ParkingLot1._0.Persistence.Seeding;
+using ParkingLot1._0.Persistence.Services;
 using ParkingLot1._0.Web.Middleware;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using ParkingLot1._0.Web.Services;
-
-using AspNetCoreHero.ToastNotification;
-using AspNetCoreHero.ToastNotification.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,13 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<SeedDb>();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.CommandTimeout(180)));
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
@@ -51,18 +61,29 @@ builder.Services.AddNotyf(config =>
     config.Position = NotyfPosition.BottomRight;
 });
 
-builder.Services.AddScoped<SeedDb>();
-
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 var app = builder.Build();
 
-/*
 using (var scope = app.Services.CreateScope())
 {
     var seedDb = scope.ServiceProvider.GetRequiredService<SeedDb>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
     await seedDb.SeedAsync();
+
+    if (!await context.Rates.AnyAsync())
+    {
+        context.Rates.AddRange(
+            new Rate { VehicleType = "Car", Modality = "Monthly", Value = 50000 },
+            new Rate { VehicleType = "Motorcycle", Modality = "Monthly", Value = 30000 },
+            new Rate { VehicleType = "Car", Modality = "Daily", Value = 5000 },
+            new Rate { VehicleType = "Motorcycle", Modality = "Daily", Value = 3000 }
+        );
+
+        await context.SaveChangesAsync();
+    }
 }
-*/
 
 if (!app.Environment.IsDevelopment())
 {

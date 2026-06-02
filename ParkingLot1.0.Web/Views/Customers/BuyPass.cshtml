@@ -1,21 +1,36 @@
-﻿@model BuyMonthlyPassViewModel
+﻿@model ParkingLot1._0.Web.Models.BuyMonthlyPassViewModel
+
+@{
+    ViewData["Title"] = "Comprar Mensualidad";
+}
+
 <h1>Vehículos encontrados: @Model.Vehicles.Count</h1>
 <h2>Comprar Mensualidad para @Model.CustomerName</h2>
 
 <form asp-action="BuyPass" method="post">
+    @Html.AntiForgeryToken()
+
     <input type="hidden" asp-for="CustomerId" />
 
-    <div class="form-group">
-        <label>Vehículo</label>
-        <select asp-for="VehicleId" class="form-control"
-                asp-items="@(new SelectList(Model.Vehicles, "Id", "Plate"))">
+    <div class="form-group mb-3">
+        <label asp-for="VehicleId" class="form-label">Vehículo</label>
+        <select asp-for="VehicleId"
+                class="form-control"
+                asp-items="@(new SelectList(Model.Vehicles, "Id", "Plate", Model.VehicleId))">
+            <option value="">Seleccione un vehículo</option>
         </select>
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label>Fecha de Inicio</label>
-        <input asp-for="StartDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+    <div class="form-group mb-3">
+        <label asp-for="StartDate" class="form-label">Fecha de Inicio</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Activar Mensualidad</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

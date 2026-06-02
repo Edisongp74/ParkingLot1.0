@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkingLot1._0.Application.DTOs.Payments;
 using ParkingLot1._0.Application.Interfaces.Services;
 using ParkingLot1._0.Domain.Common.Enums;
+using ParkingLot1._0.Domain.Entities;
 using ParkingLot1._0.Persistence.Contexts;
+using ParkingLot1._0.Persistence.Identity;
+using ParkingLot1._0.Web.Models;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -11,11 +16,13 @@ namespace ParkingLot1._0.Web.Controllers
     {
         private readonly IPaymentService _paymentService;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PaymentsController(IPaymentService paymentService, ApplicationDbContext context)
+        public PaymentsController(IPaymentService paymentService,ApplicationDbContext context,UserManager<ApplicationUser> userManager)
         {
             _paymentService = paymentService;
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -86,6 +93,78 @@ namespace ParkingLot1._0.Web.Controllers
 
             TempData["Message"] = "Pago confirmado y mensualidad activada correctamente.";
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+        [Authorize(Roles = "Administrador,Cliente,Operario")]
+        public async Task<IActionResult> History()
+        {
+            IQueryable<Payment> query = _context.Payments
+                .Include(p => p.Customer)
+                .Include(p => p.PaymentMethod);
+
+            if (User.IsInRole("Cliente"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
+
+                if (customer == null) return NotFound("No se encontró el cliente asociado al usuario.");
+
+                query = query.Where(p => p.CustomerId == customer.Id);
+            }
+
+            var payments = await query
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new PaymentHistoryViewModel
+                {
+                    Id = p.Id,
+                    CustomerName = p.Customer.FirstName + " " + p.Customer.LastName,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod.Name,
+                    PaymentType = p.PaymentType,
+                    Status = p.Status,
+                    Reference = p.Reference,
+                    CreatedAt = p.CreatedAt,
+                    PaidAt = p.PaidAt
+                })
+                .ToListAsync();
+
+            return View(payments);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> CashReport()
+        {
+            var payments = await _context.Payments
+                .Include(p => p.Customer)
+                .Include(p => p.PaymentMethod)
+                .Where(p => p.Status == PaymentStatus.Paid)
+                .OrderByDescending(p => p.PaidAt)
+                .Select(p => new PaymentHistoryViewModel
+                {
+                    Id = p.Id,
+                    CustomerName = p.Customer.FirstName + " " + p.Customer.LastName,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod.Name,
+                    PaymentType = p.PaymentType,
+                    Status = p.Status,
+                    Reference = p.Reference,
+                    CreatedAt = p.CreatedAt,
+                    PaidAt = p.PaidAt
+                })
+                .ToListAsync();
+
+            var model = new CashReportViewModel
+            {
+                TotalIncome = payments.Sum(p => p.Amount),
+                TotalPayments = payments.Count,
+                TotalMonthlyPayments = payments.Count(p => p.PaymentType.ToString() == "MonthlyMembership"),
+                Payments = payments
+            };
+
+            return View(model);
         }
     }
 }

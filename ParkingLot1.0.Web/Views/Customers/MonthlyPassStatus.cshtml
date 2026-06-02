@@ -1,0 +1,42 @@
+﻿@model List<ParkingLot1._0.Web.Models.MonthlyPassStatusViewModel>
+
+@{
+    ViewData["Title"] = "Estado de Mensualidad";
+}
+
+<h2>Estado de Mensualidad</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">No hay mensualidades registradas.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Vehículo</th>
+                <th>Marca</th>
+                <th>Estado</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Tarifa</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CustomerName</td>
+                    <td>@item.VehiclePlate</td>
+                    <td>@item.VehicleBrand</td>
+                    <td>@item.Status</td>
+                    <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                    <td>@item.RateInfo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

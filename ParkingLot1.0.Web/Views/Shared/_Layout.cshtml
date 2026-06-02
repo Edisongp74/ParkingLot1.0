@@ -221,6 +221,34 @@
                         </li>
                     }
 
+                    @if (User.Identity != null && User.Identity.IsAuthenticated &&
+    (User.IsInRole("Administrador") || User.IsInRole("Operario") || User.IsInRole("Cliente")))
+                    {
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Customers" asp-action="MonthlyPassStatus">
+                                <i class="bi bi-calendar-check"></i>
+                                <span>Estado de mensualidad</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Payments" asp-action="History">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Historial de pagos</span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                    {
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Payments" asp-action="CashReport">
+                                <i class="bi bi-cash-stack"></i>
+                                <span>Reporte de caja</span>
+                            </a>
+                        </li>
+                    }
+
                 </ul>
             </nav>
         </aside>

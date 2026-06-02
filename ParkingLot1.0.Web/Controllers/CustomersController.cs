@@ -17,6 +17,9 @@ using ParkingLot1._0.Domain.Exceptions;
 using ParkingLot1._0.Persistence.Contexts;
 using ParkingLot1._0.Web.DTOs.Customers;
 using ParkingLot1._0.Web.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ParkingLot1._0.Persistence.Identity;
 
 namespace ParkingLot1._0.Web.Controllers
 {
@@ -28,19 +31,22 @@ namespace ParkingLot1._0.Web.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ICustomerRepository _customerRepository;
         private readonly IVehicleRepository _vehicleRepository;
-
+        private readonly UserManager<ApplicationUser> _userManager;
         public CustomersController(
             IMediator mediator,
             INotyfService notyf,
             ApplicationDbContext context,
             ICustomerRepository customerRepository,
-            IVehicleRepository vehicleRepository)
+            IVehicleRepository vehicleRepository,
+            UserManager<ApplicationUser> userManager)
+
         {
             _mediator = mediator;
             _notyf = notyf;
             _context = context;
             _customerRepository = customerRepository;
             _vehicleRepository = vehicleRepository;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5)
@@ -320,6 +326,50 @@ namespace ParkingLot1._0.Web.Controllers
                 _notyf.Error(ex.Message);
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador,Cliente,Operario")]
+        public async Task<IActionResult> MonthlyPassStatus(int? customerId)
+        {
+            IQueryable<MonthlyPass> query = _context.MonthlyPasses
+                .Include(m => m.Customer)
+                .Include(m => m.Vehicle)
+                .Include(m => m.Rate);
+
+            if (User.IsInRole("Cliente"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
+
+                if (customer == null) return NotFound("No se encontró el cliente asociado al usuario.");
+
+                query = query.Where(m => m.CustomerId == customer.Id);
+            }
+            else if (customerId.HasValue)
+            {
+                query = query.Where(m => m.CustomerId == customerId.Value);
+            }
+
+            var data = await query
+                .OrderByDescending(m => m.StartDate)
+                .Select(m => new MonthlyPassStatusViewModel
+                {
+                    Id = m.Id,
+                    CustomerName = m.Customer.FirstName + " " + m.Customer.LastName,
+                    VehiclePlate = m.Vehicle.LicensePlate,
+                    VehicleBrand = m.Vehicle.Brand,
+                    Status = m.Status,
+                    StartDate = m.StartDate,
+                    EndDate = m.EndDate,
+                    RateInfo = m.Rate.VehicleType + " - " + m.Rate.Modality + " - $" + m.Rate.Value
+                })
+                .ToListAsync();
+
+            return View(data);
         }
     }
 }

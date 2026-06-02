@@ -1,0 +1,44 @@
+﻿@model List<ParkingLot1._0.Web.Models.PaymentHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Historial de Pagos";
+}
+
+<h2>Historial de Pagos</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">No hay pagos registrados.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Referencia</th>
+                <th>Creado</th>
+                <th>Pagado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CustomerName</td>
+                    <td>@item.Amount</td>
+                    <td>@item.PaymentMethod</td>
+                    <td>@item.PaymentType</td>
+                    <td>@item.Status</td>
+                    <td>@item.Reference</td>
+                    <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@(item.PaidAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -28,6 +28,10 @@ namespace ParkingLot1._0.Persistence.Migrations
                 table: "Payments");
 
             migrationBuilder.DropColumn(
+                name: "MonthlyPassId",
+                table: "Payments");
+
+            migrationBuilder.DropColumn(
                 name: "PaymentMethod",
                 table: "Payments");
 
@@ -146,7 +150,7 @@ namespace ParkingLot1._0.Persistence.Migrations
                 principalColumn: "Id");
         }
 
-        /// <inheritdoc />
+
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -217,6 +221,12 @@ namespace ParkingLot1._0.Persistence.Migrations
                 name: "CreatedAt",
                 table: "Payments",
                 newName: "PaymentDate");
+
+            migrationBuilder.AddColumn<int>(
+                name: "MonthlyPassId",
+                table: "Payments",
+                type: "int",
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "PaymentMethod",

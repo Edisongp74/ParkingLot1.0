@@ -286,5 +286,41 @@ namespace ParkingLot1._0.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
+        [Authorize(Roles = "Administrador,Operador")]
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var customers = await _mediator.Send(new GetAllCustomersQuery());
+
+            ViewBag.Customers = new SelectList(
+                customers,
+                "Id",
+                "FirstName");
+
+            return View(new CreateVehicleDto());
+        }
+
+        [Authorize(Roles = "Administrador,Operador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateVehicleDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            await _mediator.Send(new CreateVehicleCommand
+            {
+                LicensePlate = dto.LicensePlate,
+                Type = dto.Type,
+                Brand = dto.Brand,
+                Color = dto.Color,
+                CustomerId = dto.CustomerId
+            });
+
+            _notyf.Success("Vehículo creado exitosamente");
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

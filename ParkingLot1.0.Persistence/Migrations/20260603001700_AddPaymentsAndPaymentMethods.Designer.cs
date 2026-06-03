@@ -12,7 +12,7 @@ using ParkingLot1._0.Persistence.Contexts;
 namespace ParkingLot1._0.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260601232921_AddPaymentsAndPaymentMethods")]
+    [Migration("20260603001700_AddPaymentsAndPaymentMethods")]
     partial class AddPaymentsAndPaymentMethods
     {
         /// <inheritdoc />
@@ -437,9 +437,6 @@ namespace ParkingLot1._0.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int?>("MonthlyMembershipId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MonthlyPassId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("PaidAt")

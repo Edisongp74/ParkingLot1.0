@@ -21,5 +21,9 @@ namespace ParkingLot1._0.Web.DTOs.Vehicles
         [StringLength(20, ErrorMessage = "El color no puede exceder 20 caracteres")]
         [Display(Name = "Color")]
         public string Color { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Debe seleccionar un cliente")]
+        public int CustomerId { get; set; }
+
     }
 }

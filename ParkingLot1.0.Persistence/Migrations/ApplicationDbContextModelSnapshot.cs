@@ -436,9 +436,6 @@ namespace ParkingLot1._0.Persistence.Migrations
                     b.Property<int?>("MonthlyMembershipId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MonthlyPassId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime2");
 

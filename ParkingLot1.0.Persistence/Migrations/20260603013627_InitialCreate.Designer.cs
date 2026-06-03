@@ -12,8 +12,8 @@ using ParkingLot1._0.Persistence.Contexts;
 namespace ParkingLot1._0.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260601005157_InitialState")]
-    partial class InitialState
+    [Migration("20260603013627_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -252,6 +252,9 @@ namespace ParkingLot1._0.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -368,6 +371,9 @@ namespace ParkingLot1._0.Persistence.Migrations
                     b.Property<int>("ParkingSpotId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RateId")
                         .HasColumnType("int");
 
@@ -379,6 +385,8 @@ namespace ParkingLot1._0.Persistence.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("ParkingSpotId");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("RateId");
 
@@ -419,28 +427,63 @@ namespace ParkingLot1._0.Persistence.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("MonthlyPassId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParkingRecordId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PaymentMethod")
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMonthlyPayment")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MonthlyMembershipId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("ParkingLot1._0.Domain.Entities.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MonthlyPassId");
-
-                    b.HasIndex("ParkingRecordId")
-                        .IsUnique()
-                        .HasFilter("[ParkingRecordId] IS NOT NULL");
-
-                    b.ToTable("Payments");
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("ParkingLot1._0.Domain.Entities.Rate", b =>
@@ -633,6 +676,10 @@ namespace ParkingLot1._0.Persistence.Migrations
                         .HasForeignKey("ParkingSpotId")
                         .IsRequired();
 
+                    b.HasOne("ParkingLot1._0.Domain.Entities.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId");
+
                     b.HasOne("ParkingLot1._0.Domain.Entities.Rate", "Rate")
                         .WithMany()
                         .HasForeignKey("RateId");
@@ -646,6 +693,8 @@ namespace ParkingLot1._0.Persistence.Migrations
 
                     b.Navigation("ParkingSpot");
 
+                    b.Navigation("Payment");
+
                     b.Navigation("Rate");
 
                     b.Navigation("Vehicle");
@@ -653,17 +702,19 @@ namespace ParkingLot1._0.Persistence.Migrations
 
             modelBuilder.Entity("ParkingLot1._0.Domain.Entities.Payment", b =>
                 {
-                    b.HasOne("ParkingLot1._0.Domain.Entities.MonthlyPass", "MonthlyPass")
+                    b.HasOne("ParkingLot1._0.Domain.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("MonthlyPassId");
+                        .HasForeignKey("CustomerId")
+                        .IsRequired();
 
-                    b.HasOne("ParkingLot1._0.Domain.Entities.ParkingRecord", "ParkingRecord")
-                        .WithOne("Payment")
-                        .HasForeignKey("ParkingLot1._0.Domain.Entities.Payment", "ParkingRecordId");
+                    b.HasOne("ParkingLot1._0.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .IsRequired();
 
-                    b.Navigation("MonthlyPass");
+                    b.Navigation("Customer");
 
-                    b.Navigation("ParkingRecord");
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("ParkingLot1._0.Domain.Entities.Vehicle", b =>
@@ -686,11 +737,6 @@ namespace ParkingLot1._0.Persistence.Migrations
             modelBuilder.Entity("ParkingLot1._0.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("ParkingRecords");
-                });
-
-            modelBuilder.Entity("ParkingLot1._0.Domain.Entities.ParkingRecord", b =>
-                {
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("ParkingLot1._0.Domain.Entities.ParkingSpot", b =>
